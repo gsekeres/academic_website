@@ -1,7 +1,10 @@
 (function () {
+  var MAIN_SOLUTION_VOTE_THRESHOLD = 5;
+
   var state = {
     questions: [],
     activeQuestion: null,
+    mainSolution: null,
     communityRequestToken: 0
   };
 
@@ -136,6 +139,7 @@
 
   function renderQuestion(question) {
     state.activeQuestion = question;
+    state.mainSolution = null;
     getElement("question-title").innerHTML = escapeHtml(question.title);
     getElement("question-meta").innerHTML = renderTags(question);
     getElement("question-prompt").innerHTML =
@@ -146,7 +150,7 @@
     getElement("answer-preview").innerHTML = "";
     getElement("solution-submit-status").textContent = "";
     getElement("question-hint").innerHTML = renderText(question.learning_objective);
-    getElement("question-solution").innerHTML = renderText(question.solution);
+    renderMainSolution(null);
     getElement("answer-draft").value = "";
     updateIssueReportQuestion(question);
     loadCommunitySolutions(question);
@@ -219,6 +223,48 @@
     }
   }
 
+  function findMainSolution(solutions) {
+    return (solutions || []).reduce(function (best, solution) {
+      if (Number(solution.votes || 0) <= MAIN_SOLUTION_VOTE_THRESHOLD) {
+        return best;
+      }
+      if (!best || Number(solution.votes || 0) > Number(best.votes || 0)) {
+        return solution;
+      }
+      return best;
+    }, null);
+  }
+
+  function renderMainSolution(solution) {
+    var panel = getElement("question-solution");
+    var question = state.activeQuestion;
+    if (!question) {
+      return;
+    }
+
+    state.mainSolution = solution || null;
+    if (!solution) {
+      panel.innerHTML = renderText(question.solution);
+      return;
+    }
+
+    panel.innerHTML = [
+      "<div class=\"main-solution-label\">Community main solution</div>",
+      "<div class=\"community-solution-body\">" + renderMarkdown(solution.text || "") + "</div>",
+      "<details class=\"original-solution\">",
+      "<summary>Original solution</summary>",
+      renderText(question.solution),
+      "</details>"
+    ].join("");
+  }
+
+  function renderCommunityResponse(body) {
+    var solutions = body.solutions || [];
+    renderMainSolution(body.mainSolution || findMainSolution(solutions));
+    renderCommunitySolutions(solutions);
+    typesetMath();
+  }
+
   function renderCommunitySolutions(solutions) {
     var list = getElement("community-solutions-list");
     var question = state.activeQuestion;
@@ -232,11 +278,13 @@
 
     list.innerHTML = solutions.map(function (solution) {
       var alreadyVoted = hasVoted(question.id, solution.id);
+      var isCurrentMain = state.mainSolution && state.mainSolution.id === solution.id;
       return [
         "<article class=\"community-solution\">",
         "<div class=\"community-solution-meta\">",
         "<span>" + escapeHtml(solution.author || "Anonymous") + "</span>",
         "<span>" + escapeHtml(String(solution.votes || 0)) + " votes</span>",
+        isCurrentMain ? "<span>Main solution</span>" : "",
         "</div>",
         "<div class=\"community-solution-body\">" + renderMarkdown(solution.text || "") + "</div>",
         "<button class=\"vote-solution\" type=\"button\" data-solution-id=\"" + escapeHtml(solution.id) + "\"" + (alreadyVoted ? " disabled" : "") + ">",
@@ -245,7 +293,6 @@
         "</article>"
       ].join("");
     }).join("");
-    typesetMath();
   }
 
   function loadCommunitySolutions(question) {
@@ -266,7 +313,7 @@
         if (token !== state.communityRequestToken) {
           return;
         }
-        renderCommunitySolutions(body.solutions || []);
+        renderCommunityResponse(body);
       })
       .catch(function () {
         if (token !== state.communityRequestToken) {
@@ -317,7 +364,7 @@
         getElement("answer-preview").hidden = true;
         getElement("answer-preview").innerHTML = "";
         statusMessage("Solution submitted.");
-        renderCommunitySolutions(body.solutions || []);
+        renderCommunityResponse(body);
       })
       .catch(function (error) {
         statusMessage(error.message);
@@ -352,7 +399,7 @@
         });
       })
       .then(function (body) {
-        renderCommunitySolutions(body.solutions || []);
+        renderCommunityResponse(body);
       })
       .catch(function (error) {
         statusMessage(error.message);

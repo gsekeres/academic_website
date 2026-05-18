@@ -7,6 +7,7 @@ const MAX_AUTHOR_LENGTH = 80;
 const MAX_TITLE_LENGTH = 300;
 const MAX_SOLUTION_LENGTH = 20000;
 const MIN_SOLUTION_LENGTH = 20;
+const MAIN_SOLUTION_VOTE_THRESHOLD = 5;
 
 function json(status, body) {
   return new Response(JSON.stringify(body), {
@@ -53,6 +54,20 @@ function sortSolutions(solutions) {
       }
       return String(left.createdAt).localeCompare(String(right.createdAt));
     });
+}
+
+function isMainSolution(solution) {
+  return Number(solution.votes || 0) > MAIN_SOLUTION_VOTE_THRESHOLD;
+}
+
+function communityPayload(questionId, solutions, extras) {
+  const sorted = sortSolutions(solutions);
+  return {
+    questionId,
+    solutions: sorted,
+    mainSolution: sorted.find(isMainSolution) || null,
+    ...(extras || {})
+  };
 }
 
 function normalizeEntry(questionId, questionTitle, entry) {
@@ -112,10 +127,7 @@ async function listSolutions(request) {
 
   const store = await getCommunityStore();
   const current = await readEntry(store, questionId, "");
-  return json(200, {
-    questionId,
-    solutions: sortSolutions(current.data.solutions)
-  });
+  return json(200, communityPayload(questionId, current.data.solutions));
 }
 
 async function submitSolution(payload) {
@@ -151,11 +163,7 @@ async function submitSolution(payload) {
     };
   });
 
-  return json(200, {
-    questionId,
-    solution,
-    solutions: sortSolutions(entry.solutions)
-  });
+  return json(200, communityPayload(questionId, entry.solutions, { solution }));
 }
 
 async function voteForSolution(payload) {
@@ -187,10 +195,7 @@ async function voteForSolution(payload) {
     return json(404, { error: "Could not find that proposed solution." });
   }
 
-  return json(200, {
-    questionId,
-    solutions: sortSolutions(entry.solutions)
-  });
+  return json(200, communityPayload(questionId, entry.solutions));
 }
 
 export default async function handler(request) {

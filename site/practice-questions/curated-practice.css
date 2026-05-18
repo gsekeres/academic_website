@@ -108,6 +108,24 @@
   margin-top: 10px;
 }
 
+.main-solution-label {
+  color: var(--muted);
+  font-size: 0.86rem;
+  margin-bottom: 8px;
+}
+
+.original-solution {
+  border-top: 1px solid var(--faint);
+  margin-top: 18px;
+  padding-top: 12px;
+}
+
+.original-solution summary {
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
 .issue-report {
   margin-top: 42px;
   max-width: var(--measure);
