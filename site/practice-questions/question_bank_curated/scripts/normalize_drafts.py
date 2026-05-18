@@ -7,10 +7,54 @@ import argparse
 import json
 from pathlib import Path
 
+TEXT_FIELDS = ["preliminaries", "question", "solution"]
+
+UNICODE_REPLACEMENTS = {
+    "∀": r"\forall",
+    "∃": r"\exists",
+    "≤": r"\le",
+    "≥": r"\ge",
+    "≠": r"\ne",
+    "→": r"\to",
+    "⇒": r"\Rightarrow",
+    "⇔": r"\Leftrightarrow",
+    "∈": r"\in",
+    "∉": r"\notin",
+    "⊂": r"\subset",
+    "⊆": r"\subseteq",
+    "⊇": r"\supseteq",
+    "∪": r"\cup",
+    "∩": r"\cap",
+    "×": r"\times",
+    "·": r"\cdot",
+    "α": r"\alpha",
+    "β": r"\beta",
+    "γ": r"\gamma",
+    "δ": r"\delta",
+    "λ": r"\lambda",
+    "μ": r"\mu",
+    "π": r"\pi",
+    "σ": r"\sigma",
+    "∞": r"\infty",
+}
+
+
+def normalize_text(value: str) -> str:
+    for old, new in UNICODE_REPLACEMENTS.items():
+        value = value.replace(old, new)
+    return value
+
 
 def normalize(record: dict) -> dict:
+    if record.get("main_domain") == "game":
+        record["main_domain"] = "game_theory"
+    if record.get("main_domain") == "math_for_economics":
+        record["main_domain"] = "math"
+
     if record.get("difficulty") == "hard":
         record["difficulty"] = "advanced"
+    if record.get("difficulty") == "easy":
+        record["difficulty"] = "warmup"
 
     if record.get("variant_type") != "canonical" and not record.get("variant_of"):
         record["variant_type"] = "canonical"
@@ -26,6 +70,10 @@ def normalize(record: dict) -> dict:
         validation["independent_solver"] = "pending"
     if validation.get("validated_by") == "":
         validation["validated_by"] = "pending"
+
+    for field in TEXT_FIELDS:
+        if isinstance(record.get(field), str):
+            record[field] = normalize_text(record[field])
 
     return record
 

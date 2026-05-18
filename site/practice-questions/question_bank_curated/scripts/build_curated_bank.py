@@ -22,8 +22,25 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def normalized_tags(record: dict[str, Any]) -> list[str]:
+    source = record.get("source", {})
+    tags = [str(tag) for tag in record.get("tags", [])]
+    for value in [source.get("exam_date"), source.get("year")]:
+        tag = str(value) if value else ""
+        if tag and tag not in tags:
+            tags.append(tag)
+    return tags
+
+
+def normalized_record(record: dict[str, Any]) -> dict[str, Any]:
+    copy = dict(record)
+    copy["tags"] = normalized_tags(record)
+    return copy
+
+
 def frontend_record(record: dict[str, Any]) -> dict[str, Any]:
     source = record.get("source", {})
+    tags = normalized_tags(record)
     return {
         "id": record["id"],
         "cluster_id": record["cluster_id"],
@@ -34,7 +51,9 @@ def frontend_record(record: dict[str, Any]) -> dict[str, Any]:
         "subdomain": record["subdomain"],
         "source_family": source.get("family"),
         "difficulty": record["difficulty"],
-        "topics": [record["main_domain"], record["subdomain"], record["variant_type"]],
+        "topics": [record["main_domain"], record["subdomain"], record["variant_type"]] + tags,
+        "tags": tags,
+        "source": source,
         "prerequisites": record["prerequisites"],
         "learning_objective": record["learning_objective"],
         "preliminaries": record["preliminaries"],
@@ -47,6 +66,9 @@ def build_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
     by_domain = Counter(r["main_domain"] for r in records)
     by_subdomain = Counter(f"{r['main_domain']}/{r['subdomain']}" for r in records)
     by_source = Counter(r.get("source", {}).get("family", "unknown") for r in records)
+    by_exam_date = Counter(
+        r.get("source", {}).get("exam_date") for r in records if r.get("source", {}).get("exam_date")
+    )
     clusters: dict[str, list[str]] = defaultdict(list)
     for record in records:
         clusters[record["cluster_id"]].append(record["id"])
@@ -56,6 +78,7 @@ def build_summary(records: list[dict[str, Any]]) -> dict[str, Any]:
         "by_domain": dict(sorted(by_domain.items())),
         "by_subdomain": dict(sorted(by_subdomain.items())),
         "by_source": dict(sorted(by_source.items())),
+        "by_exam_date": dict(sorted(by_exam_date.items())),
         "family_sizes": dict(sorted((k, len(v)) for k, v in clusters.items())),
     }
 
@@ -79,6 +102,7 @@ def main() -> int:
     if args.accepted_only:
         records = [r for r in records if r.get("validation", {}).get("status") == "accepted"]
     records.sort(key=lambda r: (r["main_domain"], r["subdomain"], r["cluster_id"], r["id"]))
+    records = [normalized_record(r) for r in records]
 
     args.out.write_text(json.dumps(records, indent=2) + "\n")
     args.frontend_out.write_text(json.dumps([frontend_record(r) for r in records], indent=2) + "\n")
