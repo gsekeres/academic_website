@@ -6,9 +6,9 @@
   --faint: #d9d7d2;
   --accent: #8b1e3f;
   --accent-soft: #f5edf0;
-  --max: 880px;
+  --max: 760px;
   --measure: 680px;
-  --gutter: clamp(24px, 6vw, 96px);
+  --gutter: clamp(28px, 10vw, 180px);
   color-scheme: light;
 }
 
