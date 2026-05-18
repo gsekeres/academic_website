@@ -1,0 +1,277 @@
+                               4* More on Correspondences
+                                              Takuma Habu∗
+                                          takumahabu@cornell.edu
+
+                                              10th October 2024
+
+
+
+
+1      More on Correspondences
+Let us restrict attention to correspondences that are nonempty- and compact-valued. As before,
+we assume tthat X ⊆ Rd and Y ⊆ Rq are Euclidean spaces (with d, q ∈ N).
+
+
+1.1      Upper and lower hemi-continuity in terms of sequences
+Definition 1. A correspondence Γ : X ⊆ Rd ⇒ Y ⊆ Rq is
+
+     upper hemi-continuous at x ∈ X if, for any open subset O ⊆ Y such that Γ(x) ⊆ O, there
+       exists ϵ > 0 such that Γ(Bϵ (x)) ⊆ O.
+
+     lower hemi-continuous at x ∈ X if, for any open subset O ⊆ Y such that Γ(x) ∩ O ̸= ∅, there
+       exists ϵ > 0 such that Γ(z) ∩ O ̸= ∅ for all z ∈ Bϵ (x).
+
+Proposition 1. Γ : X ⊆ Rd ⇒ Y ⊆ Rq is upper hemi-continuous (resp. lower hemi-continuous) if
+and only if Γ−1 (O) = {x ∈ X : Γ(x) ⊆ O} (resp. Γ−1 (O) = {x ∈ X : Γ(x) ∩ S ̸= ∅}) is open for
+every open O ⊆ Y .
+
+Lemma 1. Suppose Γ : X ⊆ Rd ⇒ Y ⊆ Rq is a nonempty- and compact-valued upper hemi-
+continuous correspondence. Then, Γ(S) is compact in Y for any compact subset S of X.
+
+Proof. Let O be an open cover of Γ(S). We wish to find a finite subset of O that covers Γ(S).
+Note that, for each x ∈ S, O is also an open cover of Γ(x). Since Γ(x) is compact, there exist a
+                                                              S nx
+finite subcover {O1 (x), . . . , Onx (x)} ⊆ O such that Γ(x) ⊆ i=1 Oi (x) =: O(x). By Proposition 1
+in “4. Correspondences”, Γ−1 (O(x)) is open in X for each x ∈ X. Moreover, Γ(S) ⊆ x∈S O(x)
+                                                                                        S
+
+so that S ⊆ x∈S Γ−1 (O(x)); i.e., {Γ−1 (O(x)) : x ∈ S} is an open cover of S. By compactness
+              S
+
+of S, there exists {x1 , . . . , xn } ⊆ S such that {Γ−1 (O(xi )) : i ∈ {1, . . . , n}} is a finite subcover of
+S. But then, by definition of Γ−1 , {O(xn ), . . . , O(xn )} must cover Γ(S). Therefore, {Oj (xi ) : j ∈
+{1, . . . , nxi }, i ∈ {1, . . . , n}} is a finite subcover of Γ(S).                                              ■
+    ∗ Thanks to Giorgio Martini, Nadia Kotova and Suraj Malladi for sharing their lecture notes, on which these notes
+
+are heavily based.
+
+
+
+
+                                                           1
+ECON 6170                            Fall 2024         4* More on Correspondences
+
+
+Proposition 2* Let F : X ⇒ Y be a nonempty- and compact-valued correspondence.
+
+  (i) F is upper hemi-continuous at x ∈ X if and only if, for any sequence (xn )n in X and any
+       sequence (yn )n in Y such that xn → x and yn ∈ Γ(xn ) for all n ∈ N, there exists a subsequence
+       of (yn )n that converges to a point in F (x).
+
+ (ii) F is lower hemi-continuous at x ∈ X if and only if, for any sequence (xn )n in X with xn → x
+       and y ∈ F (x), there exists a sequence (yn )n in Y such that yn → y and yn ∈ Γ(xn ) for all
+       n ∈ N.
+
+Proof. (i) Fix x ∈ X. Suppose that, for any sequence (xn )n in X and any sequence (yn )n in Y
+such that xn → x and yn ∈ F (xn ) for all n ∈ N, there exists a subsequence of (yn )n that converges
+to a point in Γ(x). By way of contradiction, suppose Γ is not upper hemi-continuous at x. Then,
+there exists an open subset O ⊆ Y with Γ(x) ⊆ O and Γ(BnX−1 (x))\O ̸= ∅ for all n ∈ N. But then
+there exist sequences (x′n )n in x and (yn′ )n in Y such that xn → x and yn ∈ Γ(xn )\O for all n ∈ N.
+Since Γ(x) ⊆ O and each yn belongs to the closed set Y \O, no subsequence of (yn′ ) can converge
+to a point in Γ(x) ⊆ O.
+   Conversely, suppose that Γ is upper hemi-continuous at x ∈ X. If (xn )n is a sequence in X with
+xn → x, then S := {x, x1 , x2 , . . .} is sequentially compact in X. Then, by lemma 1 above, Γ(S)
+is sequentially compact in Y . Thus, if yn ∈ Γ(xn ) for all n ∈ N, then (yn )n —being a sequence in
+Γ(S)—must possess a subsequence (ynk )k that converges to some y ∈ Γ(S). To show that y ∈ Γ(x),
+we can use the same argument as in the proof of part (ii) of Proposition 5 in “4. Correspondences”.
+   (ii) Suppose Γ is lower hemi-continuous at x ∈ X. Fix a sequence (xn )n in X with xn → x and
+y ∈ Γ(x). By lower hemi-continuity, for every k ∈ N, there exists a δk > 0 such that Γ(z)∩BkY−1 (y) ̸=
+∅ for all z ∈ BδXk (x). Since xn → x, there exists an n1 ∈ N such that ∥xn1 − x∥ < δ1 , and for any
+k = 2, 3, . . ., there exists an nk ∈ {nk−1 + 1, nk−1 + 2, . . .} such that ∥xnk − x∥ < δk . This gives a
+subsequence (xnk )k such that Γ(xnk ) ∩ BkY−1 (y) ̸= ∅ for each k ∈ N. Now pick any (yn )n in Y such
+that
+                      yn ∈ Γ (xnk ) ∩ BkY−1 (y) ∀n ∈ {nk , . . . , nk+1 − 1} ∀k ∈ N.
+
+Then, we have yn → y and yn ∈ Γ(xn ) for each n ∈ N.
+   Conversely, suppose Γ is not lower hemi-continuous at x ∈ X. Then, there exists an open
+subset O of Y such that Γ(x) ∩ O ̸= ∅ and, for every n ∈ N, there exists an xn ∈ BnX−1 (x) with
+Γ(xn ) ∩ O = ∅. Note that xn → x, and pick any y ∈ Γ(x) ∩ O. By hypothesis, there must exist
+a sequence (yn )n in Y such that yn → y and yn ∈ Γ(xn ) for all n ∈ N. But since y ∈ O and O is
+open, yn ∈ O for n sufficiently large, contradicting that Γ(xn ) ∩ O = ∅ for all n ∈ N.                ■
+
+Remark 1. In the class notes, we gave a sequential definition for the case in which, for some x ∈ X,
+F (x) could be empty and/or not compact.
+
+Exercise 1. Define correspondences Γ1 , Γ2 , Γ3 : R ⇒ R as follows
+                                                                           
+                  [0, 1) if θ = 0              [0, 1] if θ = 0             {0} if θ = 0
+        Γ1 (θ) :=                   , Γ2 (θ) :=                  , Γ3 (θ) :=                   .     (1)
+                  {0}    if θ ̸= 0             {0} if θ ̸= 0               [0, 1] if θ ̸= 0
+
+Which of them are upper hemi-continuous and which of them are lower hemi-continuous. Which of
+them are compact-valued?
+
+
+                                        -2-
+ECON 6170                           Fall 2024                 4* More on Correspondences
+
+
+Solution 1. Γ1 : not compact-valued, not lower hemicontinuous, upper hemi-continuous. Γ2 :
+compact-valued, not lower hemi-continuous, upper hemi-continuous. Γ3 : compact-valued, lower
+hemi-continuous, not upper hemicontinuous.
+
+Exercise 2. Let Γ : Θ := R+ → X := R+ be Γ(θ) := [0, θ]. Show that Γ is continuous.
+
+Solution 2. Fix θ ∈ Θ. Observe that Γ is compact-valued. Take a sequence (θn )n in Θ and
+a sequence (xn )n in X such that θn → θ and xn ∈ Γ(θn ) = [0, θn ] for all n ∈ N. Define ϵ :=
+supn∈N ∥θn − θ∥ and let B ϵ (θ) (which contains all θn ’s) denote the closure of the open ball centred
+at θ with radius ϵ. Since the set               "                    #
+                                                    0, max θ′
+                                                      θ ′ ∈B ϵ (θ)
+
+which contains all xn ’s is compact, there exists a convergent subsequence (xnk )k of (xn )n with limit
+point x in the set above. By construction, we have 0 ≤ xn ≤ θn for all n ∈ N so that 0 ≤ x ≤ θ;
+i.e., x ∈ Γ(θ). Hence, Γ is upper hemi-continuous at θ.
+   Fix θ ∈ Θ. Take a sequence (θn )n in Θ with θn → θ and x ∈ F (θ) (and such an x exists because
+Γ(θ) is nonempty). Let γ := xθ ≤ 1 and yn = γθn for all n ∈ N. Then, yn ∈ Γ(θn ) for all n ∈ N and
+
+                                    lim yn = γ lim θn = γθ = x.
+                                    n→∞                 n→∞
+
+
+Hence, Γ is lower hemi-continuous at θ ∈ Θ.
+
+Exercise 3. Let f : Rd+ → R+ be a continuous function and define Γ : Rd+ → R+ by Γ(θ) :=
+[0, f (θ)]. Show that Γ is continuous. Hint: Modify the proof from the previous exercise by letting
+f (θ) = θ.
+
+Solution 3. Fix θ ∈ Θ. Observe that Γ is compact-valued. Take a sequence (θn )n in Θ and
+a sequence (xn )n in X such that θn → θ and xn ∈ Γ(θn ) = [0, f (θn )] for all n ∈ N. Define
+ϵ := supn∈N ∥θn − θ∥ and let B ϵ (θ) (which contains all θn ’s) denote the closure of the open ball
+centred at θ with radius ϵ. Since the set
+                                            "                            #
+                                             0, max f (θ′ )
+                                                    θ ′ ∈B ϵ (θ)
+
+
+which contains all xn ’s is compact, there exists a convergent subsequence (xnk )k of (xn )n with limit
+point x in the set above. By construction, we have 0 ≤ xn ≤ f (θn ) for all n ∈ N so that, by
+continuity of f , 0 ≤ x ≤ f (θ); i.e., x ∈ Γ(θ). Hence, Γ is upper hemi-continuous at θ.
+   Fix θ ∈ Θ. Take a sequence (θn )n in Θ with θn → θ and x ∈ F (θ) (and such an x exists because
+                              x
+Γ(θ) is nonempty). Let γ := f (θ)  ≤ 1 and yn = γf (θn ) for all n ∈ N. Then, yn ∈ Γ(θn ) for all
+n ∈ N and
+                                 lim yn = γ lim f (θn ) = γf (θ) = x,
+                                n→∞             n→∞
+
+where we used that f is continuous. Hence, Γ is lower hemi-continuous at θ ∈ Θ.
+
+
+1.2    A simpler theorem of the maximum
+Let us state a simpler theorem of the maximum that requires Γ to be continuous everywhere and
+we omit the result that solution correspondence is closed at each point.
+
+
+                                       -3-
+ECON 6170                             Fall 2024       4* More on Correspondences
+
+
+Theorem of the Maximum*             Suppose Θ ⊆ Rd and X ⊆ Rq and let Γ : Θ ⇒ X be a nonempty-
+valued, compact-valued and continuous correspondence, and f : X × Θ → R be a continuous
+function. Then, the solution correspondence X ∗ : Θ ⇒ X defined as X ∗ (θ) := arg maxx∈Γ(θ) f (x, θ)
+is nonempty-valued, compact-valued and upper hemi-continuous.
+Remark 2. To be precise, in class, we proved the version in which we only required Γ to be continuous
+at some θ0 ∈ Θ and obtained that: (i) X ∗ is nonempty-valued, compact-valued, upper hemi-
+continuous at θ0 , and closed at θ0 ; and (ii) f ∗ is continuous at θ0 .
+Remark 3. Let X := Θ := R and f (x, θ) = x. Consider the problem of maximising f with
+respect to x given each of the three constraint correspondences in 1. Let XΓ∗ denote the solution
+correspondence given constraint correspondence Γ : Θ ⇒ X:
+                                                                         
+                   ∅   if θ  = 0              {1} if θ = 0               {0} if θ = 0
+        XΓ∗1 (θ) =                , XΓ∗2 (θ) =                , XΓ∗3 (θ) =                .
+                   {0} if θ ̸= 0              {0} if θ ̸= 0              {1} if θ ̸= 0
+
+
+Observe that: XΓ∗1 (0) is empty (i.e., compactness of Γ is necessary); XΓ∗2 is not upper hemi-
+continuous at 0 (i.e., lower hemi-continuity of Γ is necessary); XΓ∗3 is not upper hemi-continuous at
+0 (i.e., upper hemi-continuity of Γ is necessary).
+Remark 4. The theorem does not tell us that X ∗ is lower hemi-continuous—and it cannot. To see
+this, suppose X := Θ := [0, 1], Γ(θ) := [0, 1] for all θ ∈ Θ, and f (x, θ) := xθ. Then,
+                                                
+                                                [0, 1] if θ = 0
+                                      X ∗ (θ) =                  ,
+                                                {1} if θ ̸= 0
+
+which is not lower hemi-continuous (but it is, nonempty-valued, compact-valued and upper hemi-
+continuous).
+
+Proof of Theorem of Maximum. Fix θ ∈ Θ. Because the set Γ(θ) is nonempty and compact, and
+f (x, θ) is continuous in x, extreme value theorem tells us that f (·, θ) attains a maximum at some
+x∗ ∈ Γ(θ); i.e., X ∗ (θ) is nonempty. Moreover, since X ∗ (θ) ⊆ Γ(θ) and Γ(θ) is compact, X ∗ (θ) is
+bounded. To show that X ∗ (θ) is closed, take any convergent sequence (x∗n )n in X ∗ (θ). Because
+Γ(θ) is closed, x∗n converges to some x∗ ∈ Γ(θ). Because f ∗ (θ) = f (x∗n , θ) for all n ∈ N and f is
+continuous, we must have f (x∗ , θ) = f ∗ (θ). Hence, x∗ ∈ X ∗ (θ); i.e., X ∗ (θ) is closed. Since we
+chose θ arbitrarily, it follows that X ∗ is nonempty-valued and compact-valued.
+   To show that X ∗ is upper hemicontinuous, fix θ ∈ Θ and take any sequence (θn )n in Θ that
+converges to θ. Choose some xn ∈ X ∗ (θn ) for all n ∈ N. By upper hemi-continuity of Γ, there
+exists a subsequence (xnk )k of (xn )n such that xnk → x ∈ Γ(θ). Fix any z ∈ Γ(θ). Since Γ is lower
+hemi-continuous, there exists a sequence (znk )k such that znk → z and znk ∈ Γ(θnk ) for all k ∈ N.
+Since f (xnk , θnk ) ≥ f (znk , θnk ) for all k ∈ N and f is continuous, we must have f (x, θ) ≥ f (z, θ).
+Since this holds for any z ∈ Γ(θ), we must have x ∈ X ∗ (θ); i.e., X ∗ is upper hemi-continuous.        ■
+
+Remark 5. In class, we proved the result by relying on the following lemmata:
+
+Lemma 3 X ∗ is closed at θ0 .
+
+
+
+
+                                        -4-
+ECON 6170                             Fall 2024        4* More on Correspondences
+
+
+Lemma 4 Suppose Z ⊆ Rd and Y ⊆ Rq and let F1 , F2 : Z ⇒ Y with F1 (z) ∩ F2 (z) ̸= ∅ for all
+   z ∈ Z. Define F : Z ⇒ Y by F := F1 ∩F2 . If F1 is compact-valued and upper hemi-continuous
+      at z0 ∈ Z, and if F2 is closed at z0 , then F is upper hemi-continuous at z0 .
+
+We used the fact that Γ is lower hemi-continuous (as well as the fact that f is continuous) to prove
+lemma 3. We then obtained the result by letting F1 = Γ and F2 = X ∗ in lemma 4. We did so to
+highlight why we require f to be continuous (i.e., not just upper semi-continuous), as well as to
+obtain the additional result that X ∗ has a closed graph.
+Remark 6. Recall that for existence of a maximum, we only need the objective function to be
+upper semi-continuous. So what can we get if we only have that f is upper semi-continuous? Let
+X := [0, 1], Θ := (0, 1], Γ(θ) := [0, θ] for all θ ∈ Θ and
+                                              
+                                              1 − 2x if x ∈ [0, 0.5)
+                                  f (x, θ) :=                         .
+                                              3 − 2x if x ∈ [0.5, 1]
+
+Observe that f is upper semi-continuous (and in particular, not lower semi-continuous), and
+                                               
+                                               {0}   if θ ∈ (0, 0.5)
+                                   X ∗ (θ) =                          ,
+                                               {0.5} if θ ∈ (0, 0.5)
+
+which is not upper hemi-continuous at 0.5. However, observe that
+                                                       
+                                                       1 if θ ∈ (0, 0.5)
+                             f ∗ (θ) := max f (x, θ) =
+                                       x∈Γ(θ)          2 if θ ∈ (0, 0.5)
+
+is upper semi-continuous.
+
+Proposition 2. Suppose Θ ⊆ Rd and X ⊆ Rq and let Γ : Θ ⇒ X be a nonempty-valued, compact-
+valued and upper hemi-continuous correspondence, and f : X × Θ → R be an upper semi-continuous
+function. Prove that f ∗ (θ) := maxx∈Γ(θ) f (x, θ) is upper semi-continuous.
+
+Proof. Take any sequence (θn )n in Θ with θn → θ for some θ ∈ Θ. Toward a contradiction, suppose
+that f ∗ (θ) < lim supn→∞ f ∗ (θn ). For each n ∈ N, take xn ∈ Γ(θn ) be such that f (xn , θn ) = f ∗ (θn )
+which exists because φ is upper semi-continuous and Γ(θn ) is compact (why?). Thus, there exists
+a subsequence (f (xnk , θnk ))k of (f (xn , θn ))n such that f (xnk , θnk ) → lim supn→∞ f ∗ (θn ) (why?).
+Hence, there exists an ϵ > 0 and K ∈ N such that
+
+                                   f (xnk , θnk ) − f ∗ (θ) ≥ ϵ ∀k ≥ K.
+
+Then, by upper hemi-continuity of Γ, there exists a subsequence (xnkℓ )ℓ of (xnk )k that converges
+to a point x ∈ Γ(θ). Then,
+                                                                  
+          lim sup f xnkℓ , θnkℓ − f ∗ (θ) ≥ ϵ ⇔ lim sup f xnkℓ , θnkℓ > f (x, θ) = f ∗ (θ) ,
+            ℓ→∞                                       ℓ→∞
+
+
+which contradicts the upper semicontinuity of φ (which requires the inequality above to hold with
+≤).                                                                                                      ■
+
+
+                                        -5-
+

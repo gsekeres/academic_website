@@ -1,0 +1,719 @@
+                                             3. Convexity
+                                            Takuma Habu∗
+                                        takumahabu@cornell.edu
+
+                                           17th September 2024
+
+
+
+1     Convex sets
+Loosely speaking convexity is the idea that sets (in linear spaces) do not have “holes”.
+Definition 1. A convex combination of elements x, y ∈ Rd is an element z = αx + (1 − α)y for
+some α ∈ [0, 1].
+Definition 2. A subset S ⊆ Rd is convex if it contains all convex combinations of pairs of elements
+of S; i.e., αx + (1 − α)y ∈ S for any x, y ∈ S and any α ∈ [0, 1].
+Proposition 1. Let S ⊆ Rd be convex, {α1 , . . . , αk } be a set of k ∈ N numbers in [0, 1] such that
+Pk                                              Pk
+  i=1 αi = 1, and {x1 , . . . , xk } ⊆ S. Then,  i=1 αi xi ∈ S.
+
+Exercise 1. Prove this.1
+Corollary 1. S is convex if and only if S contains all (finite) convex combinations of elements in
+S.
+                                                                                      T
+Proposition 2. Let C be an arbitrary collection of convex sets. Then                      S∈C S is convex.
+
+Exercise 2. Prove Proposition 2.
+Definition 3. The convex hull of a set S ⊆ Rd , denoted co(S), is the smallest convex set containing
+S; i.e.,
+                                           \
+                               co (S) :=        T ⊆ Rd : S ⊆ T, T is convex .
+Remark 1. Both of these definitions are well posed because: Rd itself is convex (and closed) and
+contains S; hence the intersection of all convex (and closed) sets that contain S is well-defined.
+This intersection clearly contains S and is convex [and closed] because arbitrary intersections of
+convex [closed] sets are convex [closed]. And this intersection must be the smallest convex [and
+closed] set containing S.
+Proposition 3. Let S be a subset of Rd . Then, co(S) is the collection of all finite convex combin-
+ations of elements in S; i.e.,
+                      (                                                      n                   n
+                                                                                                               )
+                                                     n
+                                                                             X                   X
+           co (S) =   x ∈ Rd : ∃n ∈ N,     (yi , αi )i=1 ∈ S n × [0, 1]n ,         αi = 1, x =         αi yi       .
+                                                                             i=1                 i=1
+   ∗ Thanks to Giorgio Martini, Nadia Kotova and Suraj Malladi for sharing their lecture notes, on which these notes
+
+are heavily based.
+   1 Hint: Use induction on m.
+
+
+
+
+                                                         1
+ECON 6170                                                   Fall 2024                                                          3. Convexity
+
+
+Exercise 3 (PS5). Prove Proposition 3.2
+
+Theorem 1 (Carathéodory). Let S be a subset of Rd , then any point in co(S) can be expressed as
+a convex combination of no more than d + 1 elements of S.
+
+Proof. Let S be a subset of Rd . Take any point y ∈ co(S). From Proposition 3, we know that y can
+be expressed as a convex combination of some finite elements in S. There might be different ways
+to do this, so fix a convex combination with the least number of elements from S, say, k elements.
+                            Pk
+That is, we have that y = i=1 αi xi with αi > 0 for each i = 1, . . . , k (why?).
+    Towards a contradiction, suppose that k > d + 1 (remember that d is a dimension of our
+underlying space). Observe that the set
+
+                                                 {x1 − xk , . . . , xk−1 − xk }
+
+is linearly dependent because there are at least d + 1 elements in the set but S is a subset of Rd .
+This means that there exists (β1 , . . . , βk−1 ) ̸= 0 such that
+
+                                                    k−1
+                                                    X
+                                                          βi (xi − xk ) = 0.
+                                                    i=1
+
+                  Pk−1
+Define βk = −        i=1 βi . Observe that
+
+        k                         k−1                       k−1                           k−1                       k
+                                                                                                                               !
+        X                         X                         X                             X                         X
+              βi x i = βk x k +         βi x i = βk x k +          βi (xi − xk ) +               βi x k = x k             βi       = 0.
+        i=1                       i=1                       i=1                           i=1                       i=1
+                                                            |           {z         }                            |    {z        }
+                                                                      =0                                             =0
+
+
+Hence, for any t > 0, we can write
+
+                                          k
+                                          X                 k
+                                                            X                k
+                                                                             X
+                                   y=           αi xi + t         βi xi =          (αi − tβi ) xi .
+                                          i=1               i=1              i=1
+
+
+Since k is finite and there exists at least one βi > 0, the following is well defined:
+                                                                                     
+                                                       αi
+                                        t := min          : βi > 0, i ∈ {1, . . . , k} .
+                                                       βi
+                                          α
+Let j ∈ {1, . . . , k} be such that βjj = t and define λi := αi − tβi for all i ∈ {1, . . . , k}. Since t ≤ αβii
+for all i ∈ {1 . . . , k} with βi > 0,
+
+                                           λi = αi − tβi ≥ 0 ∀i ∈ {1, . . . , k} .
+                       Pk               Pk              Pk
+We also have that        i=1 λi =         i=1 αi − t        i=1 βi = 1 and λj = αj − tβj = 0. Therefore,
+
+                                                  k
+                                                  X                      X
+                                           y=           λi xi =                        λi xi .
+                                                  i=1              i∈{1,...k}\{j}
+
+   2 Hint: One way to prove Proposition 3 is to show that (a) the set on the right-hand side is a subset of co(S) and
+
+that (b) co(S) is a subset of the set on the right-hand side, and, hence, it has to be that the two are equal.)
+
+
+
+
+                                                                  -2-
+ECON 6170                                       Fall 2024                              3. Convexity
+
+
+But this means that y can be expressed as a convex combination of k − 1 vectors which contradicts
+our choice of k.                                                                                   ■
+
+Exercise 4. TFU: If S ⊆ Rd is open, then co(S) is open.
+
+Exercise 5. TFU: If S ⊆ Rd is closed, co(S) is closed.
+
+Proposition 4. If S ⊆ Rd is a compact set, then co(S) is compact.
+
+Exercise 6. Prove Proposition 4 using Carathéodory theorem.
+
+Definition 4. The closure of a set S ⊆ Rd , denoted cl(S), is the smallest closed set that contains
+S; i.e.,
+                                        \
+                            cl (S) :=        T ⊆ Rd : S ⊆ T, T is closed .
+
+Remark 2. In the example above, we saw that S = {(x, y) ∈ R2 : yx2 = 1} is closed. Since S is
+closed, its closure is S itself. However, we saw that the convex hull of S is not closed. Hence, we
+realise that the closure of a convex hull of X (which must be closed) need not be the convex hull
+of its closure. So what is the closure of the convex hull of S?
+
+Definition 5. The closed convex hull of a set S ⊆ Rd , denoted co(S), is the smallest closed and
+convex set containing S; i.e.,
+                                  \
+                      co (S) :=        T ⊆ Rd : S ⊆ T, T is convex and closed .
+
+Proposition 5. The closed convex hull of a set S is the closure of the convex hull of S; i.e.,
+co(S) = cl(co(S)).
+
+Exercise 7 (PS5). Prove Proposition 5.
+
+Definition 6. Suppose S ⊆ Rd is convex. Then, x ∈ S is an extreme point of S if x cannot be
+written as a convex combination of two distinct points in S.
+
+Theorem 2 (Krein-Milman). Suppose S ⊆ Rd is nonempty, convex and compact. Then, S is the
+closed convex hull of its extreme points.
+
+Remark 3. Thus, Krein-Milman tells us that convex and compact sets in Rd can be (almost)
+characterised by the extreme points of the set. Together with Carathéodory theorem, we realised
+that any point in a convex and compact subset in Rd can be written as a convex combination of at
+most d + 1 of its extreme points.
+Remark 4. Extreme points are also useful in characterising solutions of some optimisation problems
+(e.g., Bauer’s Maximum Principle tells us sufficient conditions that ensures that optimum is attained
+at extreme points of the set of maximisers).
+
+
+2     Hyperplanes
+Definition 7. A hyperplane in Rd is given by
+
+                                    H (p, a) := x ∈ Rd : p · x = a
+                                               
+
+
+                                                   -3-
+ECON 6170                                              Fall 2024                                       3. Convexity
+
+
+for some (p, a) ∈ Rd × R. A closed half-space above and below the hyperplane H(p, a) are given,
+respectively, by
+
+                                       +
+                                      H (p, a) := x ∈ Rd : p · x ≥ a ,
+                                                 
+
+                                       −
+                                      H (p, a) := x ∈ Rd : p · x ≤ a .
+                                                 
+
+
+             +                −
+The sets H (p, a) and H (p, a) are the two closed half-spaces generated by the hyperplane H(p, a).
+Open half-space above and below the hyperplane H(p, a) is defined by replacing the weak inequal-
+ities with strict inequalities.
+
+    In R2 , any line can be characterised by two points that lie on the line: say v = (v1 , v2 ) and
+w = (w1 , w2 ). We can describe a line that connects these two points as
+
+                                   {(v1 , v2 ) + t (w1 − v1 , w2 − v2 ) : t ∈ R} .
+
+That is, we start from the point (v1 , v2 ) ∈ R2 and move in the direction of (w1 − v1 , w2 − v2 ) ∈ R2 .
+Notice that above is almost equivalent to the usual formula for a line:
+
+                  (z1 , z2 ) ∈ R2 : z1 − v1 = t (w1 − v1 ) , z2 − v2 = t (w2 − v2 )
+                 
+                                                                                               
+                                                                           w2 − v2
+                 = (z1 , z2 ) ∈ R2 : z1 − v1 = t (w1 − v1 ) , z2 − v2 =             t (w1 − v1 )
+                                                                           w1 − v1
+                                                                     
+                                                  w 2 − v 2
+                 = (z1 , z2 ) ∈ R2 : z2 = v2 +              (z1 − v1 ) .
+                                                  w1 − v1
+
+We say almost because using the expression above would not allow us to consider direction along
+the first coordinate (we would be dividing by zero!). In an analogous way, we can think of a line in
+the linear space Rd as being described by a point v ∈ Rd and a direction w ∈ Rd :
+
+                            v + tw ∈ Rd : t ∈ R = x ∈ Rd : ∃t ∈ R, x = v + tw .
+                                                
+
+
+    Now let us think about a plane in R3 . A point in R3 is described by (x, y, z), where each
+component corresponds to the coordinate on the x-, y- and z-axes. The easiest plane to think
+about is the plane that “runs” along two axes, say the x-axis and z-axis. Any points along this
+plane has y-coordinate of zero; however, the x and z coordinates can be anything; i.e.,
+
+                                                 (x, y, z) ∈ R3 : y = 0 .
+                                             
+
+
+Another way to describe this plane is to take any point on the plane, say the origin, and allow the
+points to move in the direction of the x- and z-axes but not in the direction of y-axis. Now, take
+any point on this plane, (x, 0, z) for some x, z ∈ R and the standard basis representing the y-axis
+e2 = (0, 1, 0), and notice that (x, 0, z) · e2 = 0. That is, any point on this plane can be described
+using the dot/inner product.3 Thus, we can now describe the plane that runs along the x-axis and
+z-axis as
+                        0 + w ∈ R3 : w · e2 = 0, w ∈ R3 = x ∈ R3 : x · e2 = 0 .
+                                                        
+
+    3 Formally, we are using the fact that R3 is an inner product space so that x, y ∈ R3 are orthogonal to one another
+
+if x · y = 0.
+
+
+
+                                                          -4-
+ECON 6170                                      Fall 2024                                   3. Convexity
+
+
+Of course, we can think about shifting the plane up and down the y-axis, which is the same
+as altering the starting point from 0. In this manner, we can think of a plane in Rd , called a
+hyperplane, as being described by a starting point v ∈ Rd and a direction p ∈ Rd \{0}:
+
+                     v + w ∈ Rd : w · p = 0, w ∈ Rd = x ∈ Rd : p · (x − v) = 0 .
+                                                    
+
+
+Since p · v is a constant, letting a := p · v gives the definition of hyperplanes above.
+Remark 5. A plane may not always contain the origin. Similarly, a line may not contain the origin.
+Thus, in general, lines and hyperplanes are not subspaces of Rd . But, we can make them into
+subspaces by translation; i.e., by adding a constant vector to all its elements. We call such sets
+linear manifolds. Formally, a linear manifold of Rd is a set X ⊆ Rd such that there is a subspace
+S ⊆ Rd and x0 ∈ Rd such that
+
+                                   X = S + {x0 } ≡ {x + x0 : x ∈ S} .
+
+Lines and hyperplanes are linear manifolds. To see this, consider a hyperplane described by a pair
+(p, x0 ):
+
+             z ∈ Rd : p · z = p · x0 = z ∈ Rd : p · (z − x0 ) = 0 = x + x0 ∈ Rd : p · x = 0
+                                                                 
+
+                                     = x ∈ Rd : p · x = 0 + {x0 }
+                                      
+
+
+where we used change of variable with x := z − x0 .
+Remark 6. Observe that {x ∈ Rd : p·x = 0} is the null space of fp : V → R defined as fp (x) := p·x
+and, as such, is a subspace of Rn . One can define hyperspace in more general linear spaces using
+this notion.
+
+
+2.1     Separating hyperplane theorems
+Separating hyperplane theorems essentially are extensions of the fact that two disjoint convex sets
+in R2 can be separated by a line.
+Remark 7. Separating hyperplane theorems are one of the most important results for economic
+theorists. They allow us to prove a lot of results in classical demand/supply theory and also are
+very useful in general equilibrium theory. Moreover, they are very important in statistics and lots
+of other fields. Here we just talk about the simplest versions of these theorems (without proofs)
+but you should know that far more general results are available (you can check out Hahn-Banach
+theorem in your free time).
+
+Definition 8. Let X, Y ⊆ Rd . The sets X and Y are separated by the hyperplane H(p, a) in Rd if
+X and Y lie in different closed half spaces generated by H(p, a).
+
+Remark 8. For example, X and Y are separated by the hyperplane H(p, a) if
+
+                                         +                   −
+                                  Y ⊆ H (p, a) and X ⊆ H (p, a) .
+
+
+
+
+                                                  -5-
+ECON 6170                                             Fall 2024                                        3. Convexity
+
+
+The condition above is equivalent to requiring
+
+                                   p · y ≥ a ∀y ∈ Y and p · x ≤ a ∀x ∈ X.                                          (1)
+
+Definition 9. Suppose X and Y are separated by the hyperplane H(p, a). The separation is said
+to be: (i) proper if at least one of the set is not contained in the hyperplane (i.e., there exists x ∈ X
+and y ∈ Y such that p · x ̸= p · y); (ii) strict if (1) holds with strict inequalities;4 and (iii) strong
+if X and Y are in disjoint closed half spaces.
+
+Remark 9. Proper separation ensures that that X∪Y are not subsets of the hyperplane. Strict and
+strong separation mean that none of the elements in X and Y are in the separating hyperplane.
+Strong separation means that there is “gap” between the sets; i.e.,
+
+                                               inf p · y > sup p · x.
+                                              y∈Y           x∈X
+
+
+Theorem 3 (Strong separating hyperplane theorem). Suppose X and Y are two nonempty, disjoint
+and convex subsets of Rd . If X is compact and Y is closed, then there exists a hyperplane that
+strongly separates them.
+
+Proof. Define f : X → R by f (x) = inf{∥x − y∥ : y ∈ Y }; i.e., f (x) is the “distance” from a point
+x to the set X. The function is continuous.5 Since X is compact, by the Extreme Value Theorem,
+f achieves a minimum on X at some point x∗ ; i.e., f (x∗ ) = inf f (X). Since f (x∗ ) = inf{∥x∗ − y∥ :
+y ∈ Y }, there exists a sequence (yn )n in Y such that ∥x∗ − yn ∥ → f (x∗ ). And since Y is closed,
+yn converges to some y∗ ∈ Y . Hence, f (x∗ ) = ∥x∗ − y∗ ∥. Now define p = x∗ − y∗ . Since X and
+Y are disjoint, p ̸= 0. Then,
+
+                            0 < ∥p∥2 = p · p = p · (x∗ − y∗ ) ⇒ p · x∗ > p · y∗ .
+
+What remains to show is that p·y∗ ≥ p·y for all y ∈ Y and p·x∗ ≤ p·x for all x ∈ X. So fix y ∈ Y .
+Since y∗ minimises the distance to x∗ over Y , for any point z = λy + (1 − λ)y∗ = y∗ + λ(y − y∗ )
+with λ ∈ (0, 1] on the line segment between y and y∗ ,
+
+  (x∗ − z) · (x∗ − z) ≥ (x∗ − y∗ ) · (x∗ − y∗ )
+                   ⇔ 0 ≥ (x∗ − y∗ ) · (x∗ − y∗ ) − (x∗ − z) · (x∗ − z)
+                        = (x∗ − y∗ ) · (x∗ − y∗ ) − (x∗ − (y∗ + λ (y − y∗ ))) · (x∗ − (y∗ + λ (y − y∗ )))
+                        = (x∗ − y∗ ) · (x∗ − y∗ ) − (x∗ − y∗ ) · (x∗ − y∗ ) + 2λ (x∗ − y∗ ) · (y − y∗ )
+                                   − λ2 (y − y∗ ) · (y − y∗ )
+                   ⇔ 0 ≥ 2p · (y − y∗ ) − λ (y − y∗ ) · (y − y∗ ) .
+
+Letting λ → 0 from above, we conclude p · y∗ ≥ p · y. A similar argument for x ∈ X completes the
+proof.                                                                                                              ■
+   4 Some people define strict separation as meaning that X and Y       are in disjoint open half-spaces generated by a
+hyperplane. Although this implies that (1) holds with strict inequalities, the converse is not true.
+  5 To see this, for any y, the Triangle inequality gives ∥x′ −y∥ ≤ ∥x′ −x∥+∥x−y∥ and ∥x−y∥ ≤ ∥x−x′ ∥+∥x′ −y∥.
+
+Hence, |∥x − y∥ − ∥x′ − y∥| ≤ ∥x − x′ ∥ so ||f (x) − f (x′ )| ≤ ∥x − x′ ∥. Hence, f is actually Lipschitz continuous.
+
+
+
+
+                                                        -6-
+ECON 6170                                     Fall 2024                                 3. Convexity
+
+
+Exercise 8. Show by example that it is not enough for both sets to be closed for a strongly
+separating hyperplane to exist.
+
+Corollary 2. Suppose Y is a nonempty, closed and convex subset of Rd . If x ∈ Rd \Y , then {x}
+and Y are strongly separated by a hyperplane.
+
+Exercise 9. Prove the Corollary above.
+
+Corollary 3. Suppose Y is nonempty, closed and convex subset of Rd . Then, exactly one of the
+following is true.
+
+  (i) either, x ∈ Y ;
+
+ (ii) or, {x} and Y are strongly separated by a hyperplane; i.e., there exists p ∈ Rd \{0} such that
+      p · x > supy∈X p · y.
+
+Theorem 4 (Separating hyperplane theorem). Suppose X and Y are two nonempty, disjoint and
+convex subsets of Rd . Then, X and Y are separated by a hyperplane.
+
+Remark 10. Theorem 4 does not guarantee proper, strict or strong separation.
+Remark 11. If both sets are open, then there exists a hyperplane that strictly separates them.
+
+Exercise 10. Show by example that, for general nonempty convex disjoint sets X and Y , it may
+be necessary that both inequalities are allowed to be weak.
+
+
+2.2       Supporting hyperplane theorems
+From a separating hyperplane theorem, we can establish that, given a convex set and a point on
+its “border”, there exists a hyperplane that is tangent to the set at that point. This latter result,
+called the supporting hyperplane theorem is useful in thinking about the idea of domination and it
+also pays a crucial role in many mathematical results (including the KKT theorem).
+
+Definition 10. Given a set S ⊆ Rd , a point x ∈ S is an interior point if there exists an open ball
+centred at x that is completely contained in S. Let int(S) denote the set of all interior points of S.
+A point x ∈ S is a boundary point if x ∈ cl(S)\int(S).
+
+Definition 11. A set X ⊆ Rd is bounded by a hyperplane H(p, a) if X is entirely contained in one
+of the closed half spaces generated by H(p, a). A hyperplane H(p, a) is a supporting hyperplane
+for X if X is bounded by H(p, a) and X ∩ H(p, a) ̸= ∅. A supporting hyperplane H(p, a) for X
+is proper if p · x ̸= a for some x ∈ X.
+
+Remark 12. If H(p, a) is a supporting hyperplane for X ⊆ Rd , then
+
+                                          p · x ≤ a ∀x ∈ X
+
+and there exists x0 ∈ X such that
+                                             p · x0 = a.
+
+Theorem 5 (Supporting hyperplane theorem). Suppose X is a nonempty, convex subset of Rd ,
+and let x0 ∈ X be a boundary point of X; i.e., x0 ∈ X\int(X). Then, there exists a supporting
+hyperplane at x0 . If, in addition, X has a nonempty interior, then the supporting hyperplane is
+proper.
+
+
+                                                -7-
+ECON 6170                                        Fall 2024                                          3. Convexity
+
+
+Proof. See Minkowski Supporting Hyperplane Theorem in Ok section G.3.2.                                       ■
+
+Corollary 4. Suppose X ⊆ Rd is a nonempty, convex subset of Rd with a nonempty interior.
+Suppose that y ∈ Rd . Then exactly one of the following is true.
+
+  (i) either, y ∈ int(X);
+
+ (ii) or, we can find a supporting hyperplane; i.e., there exists p ∈ Rd \{0} such that p · y ≥
+      supx∈X p · x.
+
+Proposition 6. A closed and convex set S ⊆ Rd is the intersection of all closed half-spaces that
+contain it.
+
+Proof. Suppose X ⊆ Rd is closed and convex. Let H be the collection of closed half-spaces that
+                                    T
+contain X. We want to show that X = H∈H H.
+                         T
+   We first show that X ⊆ H∈H H. For any x ∈ X, using the supporting hyperplane theorem, we
+can find a hyperplane that generates a closed half space that contains x by picking any boundary
+point x0 ∈ X and apply the supporting hyperplane theorem.
+                          T
+   It remains to show that H∈H H ⊆ X. We will prove the contrapositive statement; i.e., we will
+                              T
+show that if x ∈
+               / X, then x ∈/ H∈H H. Fix some x ∈   / X. Since X is closed and convex, there
+is a hyperplane that strongly separates x from X. This hyperplane defines a closed half space H
+                                               T
+containing X. Hence, x ∈
+                       / H implying that x ∈
+                                           /     H∈H H.                                       ■
+
+Remark 13. The notion of domination captures the idea that one alternative is better than another
+under all circumstances. It turns out that separation by hyperplane is a useful way to mathemat-
+ically capture the idea of domination. One example relates to the idea of dominant strategies in
+games. Here, we focus on a single decision-maker. Let A ⊆ Rd be a finite set of actions and Θ
+be a finite set of states. Let u : A × Θ → R denote the decision-maker’s utility. The goal is to
+show that a “pure” action is not dominated by some randomised decision rule if and only if it is
+optimal for some belief over state. Let ∆Θ denote the set of all probability distributions over Θ;
+i.e., ∆Θ := {p ∈ [0, 1]Θ : θ∈Θ p(θ) = 1}. Let ∆A denote the set of all probability distribution
+                          P
+
+over A. Note that ∆A represents the set of all randomised decision rules. We now let X be the set
+of payoffs for each state that yields weakly lower payoffs than some randomisation of decision rules.
+                          (                                                               )
+                                                            X
+                   X :=       w ∈ RΘ : ∃σ ∈ ∆A w (θ) ≤            σ (a) u (a, θ) ∀θ ∈ Θ .
+                                                            a∈A
+
+
+In other words, X is the set of dominated payoffs. Note that X is nonempty and convex. Moreover,
+if a ∈ A is dominated by some randomised decision rule, then
+                                                    X
+                               ∃σ ∈ ∆A u (a, θ) <         σ (a) u (a, θ) ∀θ ∈ Θ.
+                                                    a∈A
+
+
+Observe that a ∈ A being dominated means that the vector u(a) = (u(a, θ))θ∈Θ lies in the interior
+of X. Thus, by Corollary 4, a is not dominated if and only if there is a supporting hyperplane at
+u(a); i.e., there exists v ∈ Rd \{0} such that
+                                                    X                             X
+              v · u (a) ≥ max {v · w : w ∈ X} ⇔            v (θ) u (a, θ) ≥ max         v (θ) w (θ) .
+                                                                           w∈X
+                                                    θ∈Θ                           θ∈Θ
+
+
+                                                    -8-
+ECON 6170                                            Fall 2024                                         3. Convexity
+
+
+                                                              P
+Because X is not bounded below and v is a nonzero vector,       θ∈Θ v(θ) > 0. So we can define
+p(θ) := P v(θ)v(θ) for all θ ∈ Θ so that p = (p(θ))θ∈Θ ∈ ∆Θ. The maximum of the linear function
+             θ∈Θ
+p · w over w ∈ X is achieved at one of the extreme points in A, and the extreme points are all the
+vectors u(a) = (u(a, θ))θ∈Θ for all a ∈ A. Hence,
+                    X                             X                           X
+                          p (θ) u (x, θ) ≥ max          v (θ) w (θ) = max           p (θ) u (a, θ) .
+                                            w∈X                         a∈A
+                    θ∈Θ                           θ∈Θ                         θ∈Θ
+
+
+What we have now argued is that action a∗ ∈ A is not dominated if and only if there exists p ∈ ∆Θ
+such that
+                               X                          X
+                                     p (θ) u (a∗ , θ) ≥         p (θ) u (a, θ) ∀a ∈ A;
+                               θ∈Θ                        θ∈Θ
+
+i.e., a∗ is optimal for some belief p over Θ.
+
+
+3     Convex and quasiconvex functions
+Definition 12. Let X ⊆ Rd be convex. A function f : X → R is...
+
+     concave if f (αx + (1 − α)y) ≥ αf (x) + (1 − α)f (y) for any x, y ∈ X and α ∈ [0, 1].
+
+     convex if f (αx + (1 − α)y) ≤ αf (x) + (1 − α)f (y) for any x, y ∈ X and α ∈ [0, 1].
+
+     strictly concave if f (αx + (1 − α)y) > αf (x) + (1 − α)f (y) for any two distinct x, y ∈ X and
+      α ∈ (0, 1).
+
+     strictly convex if f (αx + (1 − α)y) < M αf (x) + (1 − α)f (y) for any two distinct x, y ∈ X
+      and α ∈ (0, 1).
+
+Remark 14. A function is convex (resp. strictly convex ) if and only if −f is concave (resp. strictly
+concave).
+    Define an epigraph and subgraph of a function f : X ⊆ Rd → R respectively as
+
+                                 epi (f ) := {(x, y) ∈ X × R : f (x) ≤ y} ,
+                                 sub (f ) := {(x, y) ∈ X × R : f (x) ≥ y} .
+
+Proposition 7. A function is concave (resp. convex) if and only if its subgraph (resp. epigraph)
+is convex.
+
+Exercise 11 (PS5). Prove Proposition 7.
+
+Corollary 5. If f : X → R is concave (resp. convex), then the set {x ∈ X : f (x) ≥ r} (resp.
+{x ∈ X : f (x) ≤ r}) is convex for any r ∈ R.
+
+Proof. By Proposition 7, if f : X → R is concave, then we know that sub(f ) is convex. Fix r ∈ R
+and take any x, x′ ∈ {x ∈ X : f (x) ≥ r}. Then, (x, r), (x′ , r) ∈ sub(f ). Since sub(f ) is convex,
+
+                                (αx + (1 − α) x′ , r) ∈ sub (f ) ∀α ∈ [0, 1] .
+
+
+
+
+                                                          -9-
+ECON 6170                                        Fall 2024                                   3. Convexity
+
+
+That is,
+                                   f (αx + (1 − α) x′ ) ≥ r ∀α ∈ [0, 1] .
+
+Hence, αx + (1 − α)x′ ∈ {x ∈ X : f (x) ≥ r} for all α ∈ [0, 1].                                        ■
+
+Definition. Let X ⊆ Rd be convex. A function f : X → R is affine if f (x) = a · x + b for some
+a ∈ Rd and b ∈ R.
+Exercise 12 (PS5). Prove that an affine function is both convex and concave.
+Proposition 8. Let X ⊆ Rd be convex. If f : X → R is concave or convex, then f is continuous
+on the interior of its domain.
+Proof. It suffices to prove the case for when X is open (because interior of X is always open and
+concavity of f on X implies concavity on the interior of X too). So suppose X is open and take
+x0 ∈ X. Consider a sequence (xn )n in X that converges to x0 . Since X is open, we can find an
+open ball centred at x0 with radius ϵ > 0; i.e., there exists Bϵ (x0 ) ⊆ X. Pick α ∈ (0, ϵ) and let
+A ⊆ Bϵ (x0 ) be defined by
+                                     A := x ∈ Rd : ∥x − x0 ∥ = α .
+                                         
+
+
+There exists N ∈ N large enough (why?) so that ∥xn − x0 ∥ < α for all n > N . Then, for all n > N ,
+there is zn ∈ A such that xn = αn x0 + (1 − αn )zn for some αn ∈ (0, 1). Because xn → x0 and
+∥zn − x0 ∥ = α > 0 for all n ∈ N, it must be that αn → 1. Therefore, by concavity of f ,
+
+              f (xn ) = f (αn x0 + (1 − αn ) zn ) ≥ αn f (x0 ) + (1 − αn ) f (zn ) ∀n > N.
+
+Taking limits, we have
+                                         lim inf f (xn ) ≥ f (x0 ) .
+                                          n→∞
+
+Now, it is also true that, for all n > N, there is wn ∈ A and βn ∈ (0, 1) such that x0 = βn xn + (1 −
+βn )wn . Then, by concavity of f ,
+
+                    f (x0 ) = f (βn xn + (1 − βn ) wn ) ≥ βn f (xn ) + (1 − βn ) f (wn )
+                             1           1 − βn
+                        ⇔      f (x0 ) −        f (wn ) ≥ f (xn )
+                            βn             βn
+
+Because βn → 1, by taking limits, we obtain
+
+                                         f (x0 ) ≥ lim sup f (xn ) .
+                                                    n→∞
+
+
+Hence, we have shown that
+
+                                lim inf f (xn ) ≥ f (x0 ) ≥ lim sup f (xn ) .
+                                 n→∞                         n→∞
+
+
+Recalling that lim supn→∞ f (xn ) ≥ lim inf n→∞ f (xn ), above implies that above inequalities must
+in fact be equalities. Hence, limn→∞ f (xn ) = f (x0 ).                                                ■
+
+Definition 13. Given a function f : X ⊆ Rd → R, an element x ∈ X is a global maximum of f if
+
+                                       f (x) ≥ f (y) ∀y ∈ X\ {x} .
+
+
+                                                   - 10 -
+ECON 6170                                       Fall 2024                               3. Convexity
+
+
+The element x ∈ X is a strict global maximum if the inequality holds strictly above (and if it exists,
+it must be unique). An element x ∈ X is a local maximum of f if, for some ϵ > 0,
+
+                                   f (x) ≥ f (y) ∀y ∈ Bϵ (x) \ {x} .
+
+The element x ∈ X is a strict local maximum if the inequality holds strictly above. Local minima
+are defined analogously with the inequalities reversed.
+
+Proposition 9. Let X ⊆ Rd be convex. If f : X → R is concave, then any local maximum of f is
+a global maximum of f . Moreover, the set of maximisers
+
+                                      {x ∈ X : f (x) = sup f (X)}
+
+is convex.
+
+Proof. Suppose f admits a local maximum at x ∈ X that is not a global maximum. By definition
+of a local maximum, there is ϵ > 0 such that f (x) ≥ f (y) for all y ∈ Bϵ (x) ∩ X. Since x is not a
+global maximum, there is z ∈ X such that f (z) > f (x). Since X ix convex, αx + (1 − α)z ∈ X for
+all α ∈ [0, 1]. We may pick α sufficiently close to one (but not one) so that αx + (1 − α)z ∈ Bϵ (x).
+By concavity of f ,
+                         f (αx + (1 − α) z) ≥ αf (x) + (1 − α) f (z) > f (x) .
+
+But this is a contradiction because αx + (1 − α)z ∈ Bϵ (x) so that f (x) ≥ f (αx + (1 − α)z).
+   To see the second part, suppose x1 and x2 are both maximisers of f on X. It must be that
+f (x1 ) = f (x2 ) and concavity of f implies that, for any α ∈ [0, 1],
+
+                      f (αx1 + (1 − α) x2 ) ≥ αf (x1 ) + (1 − α) f (x2 ) = f (x1 ) .
+
+Above must hold with equality because x1 and x2 are maximisers. It follows that the set of
+maximisers must be convex. Note also that an empty set is trivially convex so that the statement
+is true even if the set of maximisers is empty.                                                     ■
+
+Remark 15. Analogous result hold when f is convex with respect to minimisers.
+
+Definition 14. Let X ⊆ Rd be convex. A function f : X → R is...
+
+    quasi-concave if f (αx + (1 − α)y) ≥ min{f (x), f (y)} for any x, y ∈ X and α ∈ [0, 1].
+
+    quasi-convex if f (αx + (1 − α)y) ≤ max{f (x), f (y)} for any x, y ∈ X and α ∈ [0, 1].
+
+    strictly quasi-concave if f (αx + (1 − α)y) > min{f (x), f (y)} for all distinct x, y ∈ X and
+      α ∈ (0, 1).
+
+    strictly quasi-convex if f (αx + (1 − α)y) < max{f (x), f (y)} for all distinct x, y ∈ X and
+      α ∈ (0, 1).
+
+Remark 16. A function f is (strictly) quasi-convex if −f is (strictly) quasi-concave.
+
+Exercise 13 (PS5). Prove the following: Let X ⊆ Rd be convex and let f : X → R. Then, f is
+quasiconcave (resp. quasi-convex) if and only if the upper (resp. lower) contour sets are convex;
+i.e., {x ∈ X : f (x) ≥ r} (resp. {x ∈ X : f (x) ≤ r}) are convex for any r ∈ R.
+
+
+                                                  - 11 -
+ECON 6170                                      Fall 2024                              3. Convexity
+
+
+Exercise 14 (PS5). TFU: If f is a quasi-concave function and h : R → R is nondecreasing function
+then h ◦ f is quasi-concave. Do the same replacing quasi-concave with concave (in both places).
+
+Proposition 10. Let X ⊆ Rd be convex, If f : X → R is quasi-concave, the set of maximisers
+
+                                      {x ∈ X : f (x) = sup f (X)}
+
+is convex. If f is strictly quasi-concave, any local maximum f is a global maximum of f on X and
+the set of maximisers contains at most one element.
+
+Proof. Suppose x1 and x2 are both maximisers of f on X. It must be that f (x1 ) = f (x2 ) and
+quasi-concavity of f implies that, for any α ∈ [0, 1],
+
+                       f (αx1 + (1 − α) x2 ) ≥ min {f (x1 ) , f (x2 )} = f (x1 ) .
+
+Above must hold with equality because x1 and x2 are maximisers. It follows that the set of
+maximisers must be convex. Note also that an empty set is trivially convex so that the statement
+is true even if the set of maximisers is empty.
+   Now suppose f is strictly quasiconcave and the x ∈ X is a local maximum of f on X. Thus,
+there exists ϵ > 0 such that f (x) ≥ f (y) for all y ∈ Bϵ (x). Toward a contradiction, suppose that
+x is not a global maximum; i.e., there exists z ∈ X such that f (z) > f (x) . But then since X is
+convex, for any α ∈ [0, 1], αx + (1 − α)z ∈ X and by the quasiconcavity of f , we have
+
+                    f (αx + (1 − α) z) > min {f (x) , f (z)} = f (x) ∀α ∈ (0, 1) .
+
+In particular, for sufficiently large α > 0, αx + (1 − α)z ∈ Br (x) and hence we must have f (x) ≥
+f (αx + (1 − α)z); a contradiction.
+    Suppose that there are two global maximisers, x, y ∈ X. Pick any α ∈ (0, 1) and define
+z := αx + (1 − α)y ∈ X. By strict quasiconcavity,
+
+                             f (z) > min {f (x) , f (y)} = f (x) = f (y) .
+
+But this contradicts the fact that x and y were global maximisers.                                ■
+
+Exercise 15. TFU: Let X ⊆ Rd be convex, If f : X → R is quasi-concave, then any local maximum
+f is a global maximum of f on X .
+
+
+
+
+                                                  - 12 -
+

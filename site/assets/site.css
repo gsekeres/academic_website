@@ -328,7 +328,7 @@ button:hover {
 .summary {
   max-width: var(--measure);
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.78rem;
 }
 
 .home-summary {

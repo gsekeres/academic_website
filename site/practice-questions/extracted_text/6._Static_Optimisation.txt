@@ -1,0 +1,836 @@
+                                     6. Static optimisation
+                                            Takuma Habu∗
+                                        takumahabu@cornell.edu
+
+                                             23rd October 2024
+
+
+
+
+1     Static optimisation problems
+Our goal is to be able to solve the following type of problem, which we will call the primal problem.
+
+                                      sup f (x)
+                                      x∈Rd
+
+                                        s.t. hk (x) = 0 ∀k ∈ {1, . . . , K} ,
+                                             gj (x) ≥ 0 ∀j ∈ {1, . . . , J} ,
+
+where f, hk , gj : Rd → R for all k ∈ {1, . . . , K} and j ∈ {1, . . . J}. By “solve”, we want to obtain
+the set of maximisers, i.e., x that satisfy the constraints and maximises the objective function.
+This, in turn, allows us to compute the maximised objective function. We will also think about
+comparative statistics; i.e., how the maximisers and thus the objective function change as we “vary”
+the optimisation problem.
+    Since sup −f = − inf f , once we know how to solve maximisation problems, we also know how
+to solve minimisation problems. In economics, we tend to focus on maximisation problems, whereas
+in mathematics/computer science, the focus is on minimisation problems.
+   Define h(x) := (hk (x))K                       J
+                          k=1 and g(x) := (gj (x))J=1 (think of them as column vectors). Also
+define Γ ⊆ Rd as the set of all x ∈ Rd that satisfies the constraints in the primal problem; i.e.,
+
+               Γ := x ∈ Rd : hk (x) = 0 ∀k ∈ {1, . . . , K} , gj (x) ≥ 0 ∀j ∈ {1, . . . , J} .
+                   
+
+
+This allows us to write the primal problem succinctly as
+
+                                                   sup f (x) .
+                                                   x∈Γ
+
+
+Given any x ∈ Rd , we say that a constraint is binding if it holds with equality, and slack if the
+constraint is satisfied but is not binding.
+   ∗ Thanks to Giorgio Martini, Nadia Kotova and Suraj Malladi for sharing their lecture notes, on which these notes
+
+are heavily based.
+
+
+
+
+                                                         1
+ECON 6170                            Fall 2024                   6. Static Optimisation
+
+
+Exercise 1. Suppose Γ1 ⊆ Γ2 ⊆ Rd and f : Rd → R. Prove that
+
+                                          sup f (x) ≤ sup f (x) .
+                                          x∈Γ1          x∈Γ2
+
+
+Exercise 2. Suppose Γ ⊆ Rd and f : Rd → R. If g : R → R is a strictly increasing function, then
+                                                                              
+                    x ∈ X : f (x) = sup f (z) = x ∈ X : g (f (x)) = sup g (f (z)) .
+                                    z∈Γ                                     z∈Γ
+
+
+How does the result change if g was a weakly increasing function?
+
+Remark 1. Note that g(f (x)) = kf (x) + c for any k > 0 and c ∈ R is a strictly increasing function
+so that above also tells us that multiplying the objective by a strictly positive constant and adding
+constant to the objective function leaves the set of maximisers unchanged.
+
+
+2     Unconstrained optimisation
+Let us first consider the problem of maximising a function without any constraints.
+
+Proposition 1. Suppose f : X ⊆ Rd → R has a local maximum or a local minimum at x∗ ∈ int(X)
+and that f is differentiable at x∗ . Then, x∗ satisfies the first-order condition; i.e.,
+
+                                                 ∇f (x∗ ) = 0.
+
+Proof. Suppose X is open. We already proved this for the case when d = 1 (Proposition 6 in 5.
+Differentiation). To extend the result to the case when d > 1, suppose that f has a local maximum
+(resp. minimum) at x∗ ∈ int(X). Fix any v ∈ Rd \{0}, Sv := {t ∈ R : x∗ + tv ∈ X} and
+define g : Sv → R where g(t) := f (x∗ + tv). Observe that gv must have a local maximum (resp.
+minimum) at 0. Since g : R → R, we must have g ′ (0) = ∇f (x∗ )v = 0. Since v ∈ Rd \{0} was
+chosen arbitrarily, this implies that ∇f (x∗ ) = 0.                                                   ■
+
+Remark 2. The intuition for this comes from our discussion about gradient vectors. Recall that
+∇f (x) is the direction that leads to the largest increase in the value of f . Together with the fact
+that f (x) + ∇f (x)h approximates f (x + h), it follows that if ∇f (x) ̸= 0, we can move in the
+direction of ∇f (x), i.e., h = c∇f (x) for some c > 0, to increase the value of f . Thus, for a point to
+be maximum or a minimum, it must be that there is no direction in which we can move from the
+point to increase the value of f ; i.e., ∇f (x) = 0.
+    Any x ∈ int(X) that satisfies the first-order condition is called a critical point of f . Although
+first-order condition is necessary for a point to be a local maximum or a local minimum (assuming
+differentiability), it is not sufficient (e.g., f (x) = x3 ). This leads us to the idea of second-order
+conditions that helps us distinguish between local maxima and minima.
+
+Proposition 2. Suppose f is C2 on X ⊆ Rd . If f has a local maximum (resp. local minimum) at
+x ∈ int(X), then D2 f (x) is negative semidefinite (resp. positive semidefinite).
+
+Proof. Suppose X is open and that f has a local maximum at x ∈ X. Fix v ∈ Rd \{0} and let
+Sv := {t ∈ R : x + tv ∈ X} and define g : Sv → R where g(t) := f (x + tv) . Define h : Sv → X as
+
+
+                                          -2-
+ECON 6170                               Fall 2024                6. Static Optimisation
+
+
+h(t) := x + tv. Then, gv (t) = f (h(t)) and h′ (t) = v so that
+
+                                                           d
+                                                           X ∂f
+                               gv′ (t) = ∇f (h (t)) v =                (h (t)) vi .
+                                                           i=1
+                                                                 ∂xi
+
+(why can we replace total derivatives with partial derivatives?) Therefore,
+
+                                    n
+                                    X n
+                                      X      ∂2f
+                       gv′′ (t) =                   (h (t)) vi vj = v⊤ D2 f (h (t)) v.
+                                    i=1 j=1
+                                            ∂xi ∂xj
+
+
+If f has a local maximum at x, then g has a local maximum at 0. Hence, g ′ (0) = 0. Moreover, we
+cannot have g ′′ (0) > 0: if it were, then x is also a local minimum (PS7) meaning that g ′ must be
+constant at x which contradicts that g ′′ (0) > 0. Hence, it follows that g ′′ (0) ≤ 0. This, in turn,
+implies that v⊤ D2 f (x)v ≤ 0. Since this holds for all v ∈ Rd , it follows that D2 f (x) is negative
+semidefinite.                                                                                           ■
+
+Proposition 3. Suppose f is C2 on X ⊆ Rd . If ∇f (x) = 0 and D2 f (x) is negative definite (resp.
+positive definite) at some x ∈ X, then x is a strict local maximum (resp. minimum).
+
+Remark 3. Focusing on maxima, so far, what we have shown the following. Suppose f is C2 on X
+and x ∈ int(X). We have shown the following necessary conditions for x to be a local maximum:
+the first-order necessary condition: ∇f (x) = 0; and the second-order necessary condition: D2 f (x)
+is negative semidefinite. We also have the following sufficient condition: If ∇f (x) = 0 and D2 f (x) is
+negative definite, then x is a strict local maximum. Notice, in particular, that if we have x ∈ int(X)
+such that ∇f (x) = 0 but D2 f (x) is negative semidefinite (but not negative definite), we cannot
+conclude that x is a local maximum; but we cannot rule out the possibility that x is a local
+maximum! Situation will be improved if we could either (i) strengthen the necessary second-order
+condition to be about negative definiteness of D2 f (x); or (ii) strengthen the sufficient second-order
+condition to require D2 f (x) to be negative semidefinite (while perhaps giving up on the strictness
+of local maximum). The following examples demonstrates that we can’t.
+
+  (i) Consider f : R → R such that f (x) := −x4 . Since f (·) ≤ 0 and f (0) = 0, it follows that 0
+      is a (global) maximum of f . However, f ′′ (0) = 0 so that, viewed as a 1 × 1 matrix, f ′′ (0) is
+      negative semidefinite but not negative definite.
+
+ (ii) Consider f : R → R such that f (x) := x3 . Then, f ′ (0) = f ′′ (0) = 0. Thus, f ′′ (0), viewed as a
+      1 × 1 matrix. is negative semidefinite but not negative definite. Observe that 0 would satisfy
+      the condition for the sufficiency of second-order condition if we had relaxed the condition to
+      allow for negative definiteness. However, 0 is neither a local maximum nor a local minimum
+      of f .
+
+The point of this (long) remark is that second-order condition isn’t all that useful. All hope is not
+lost, however!
+
+Proposition 4. Suppose f is differentiable on X, where int(X) is convex, and that f is concave.
+Fix x∗ ∈ int(X). The following are equivalent:
+
+  (i) ∇f (x∗ ) = 0.
+
+
+                                           -3-
+ECON 6170                                   Fall 2024                  6. Static Optimisation
+
+
+ (ii) f has a local maximum at x∗ .
+
+(iii) f has a global maximum at x∗ .
+
+Exercise 3 (PS9). Prove Proposition 4. Hint: Use Proposition 14 from “5. Differentiation.’
+
+Remark 4. Why does this result work when second-order conditions did not...? Remember that
+the second-order condition was about the property of the Hessian at a particular point. However,
+concavity of f is about the Hessian at all points in the domain of f .
+Remark 5. First-order approach can only help to identify maximum/minimum in the interior of the
+domain of f . Thus, if the domain of f is closed, even if we know that an interior point maximises
+f , we must still check that that f is not maximised at some boundary point.
+Remark 6. Recall that if f is strictly concave, then f is strictly quasiconcave (PS5). Thus, if we add
+to Proposition 4 that f is strictly concave, then we know that x∗ ∈ int(X) such that ∇f (x∗ ) = 0
+(if it exists) must be unique. Moreover, if we add that X is compact, then we know that that a
+maximum exists by Weierstrass theorem. Hence, we can conclude that f attains a global maximum
+at x∗ such that ∇f (x∗ ) = 0or at some x∗ ∈ X\int(X) .
+
+
+3     Constrained optimisation
+3.1     Necessity: Equality constraints
+Theorem 1 (Theorem of Lagrange). Let f : Rd → R and h : Rd → RK , where hk is C1 for each
+k ∈ {1, . . . , K}. Suppose x∗ is a local maximum or minimum of f on the constraint set
+
+                                             Γ := x ∈ Rd : h (x) = 0 .
+                                                 
+
+
+Suppose that1
+                                                   rank (Dh (x∗ )) = K.                                                 (1)
+
+Then, there exists Lagrange multipliers µ∗ = (µ∗k )K
+                                                   k=1 ∈ R
+                                                           K
+                                                             such that
+
+                                                      K
+                                                      X
+                                               ∗
+                                        ∇f (x ) +           µ∗k ∇hk (x∗ ) = 01×d .                                      (2)
+                                                      k=1
+
+
+Proof. Note first that Dh is a K × d matrix and that rank(Dh) ≤ min{K, d}. Hence, if K > d,
+then (1) cannot be satisfied. Thus, we may assume that K ≤ d and further assume that the K × K
+submatrix of Dh(x∗ ) that has full rank consists of the first K rows and K columns of Dh(x∗ ).
+For each x ∈ Γ, we write x = (w, z) ∈ RK × Rd−K . Let ∇w f (a 1 × K matrix) and ∇z f (a
+1 × (d − K) matrix) denote the derivative of f with respect to w variables along and z variables
+alone, respectively. Dw h (a K ×K matrix) and Dz h (a K ×(d−K) matrix) are defined analogously.
+We will treat µ∗ ∈ RK as a 1 × K matrix. Let x∗ = (w∗ , z∗ ) ∈ Γ denote a local maximum (or
+   1 Recall that any matrix X ∈ Rm×n can be viewed as a collection of (row or column) vectors. Thus, we can
+
+consider the linear space that the vectors span. The linear space spanned by the columns of X is the column space
+of X. The column rank of X is the rank of the column space of X (recall that rank of a linear space equals the
+cardinality of (any) basis of that space). The linear space spanned by the rows of X, i.e., span({x1 , . . . , xm }), is the
+row space of X. The row rank of X is the rank of the row space of X. Finally, recall that column and row ranks are
+equal.
+
+
+                                               -4-
+ECON 6170                              Fall 2024                6. Static Optimisation
+
+
+a local minimum) of f in the constraint set that satisfies (1). We want to show that there exists
+µ∗ ∈ RK such that
+
+                               ∇w f (w∗ , z∗ ) + µDw h (w∗ , z∗ ) = 01×K ,                         (3)
+                                ∇z f (w∗ , z∗ ) + µDz h (w∗ , z∗ ) = 01×(d−K) .                    (4)
+
+   The condition (1) allows us to appeal to the Implicit Function Theorem to deliver an open
+set V ⊆ Rd−K that contains z∗ and a C1 function b : V → RK such that b(z∗ ) = w∗ and
+h(b(·), ·) = 0K×1 on V . Treating the two sides of the equality as functions of z, we obtain
+
+                      Dw h (b (z) , z) Db (z) + Dz h (b (z) , z) = 0K×(d−K) ∀z ∈ V.
+
+Since Dhw (w∗ , z∗ ) has full rank, it is invertible so that
+
+                                                             −1
+                               Db (z∗ ) = − [Dw h (w∗ , z∗ )]      Dz h (w∗ , z∗ ) .
+
+Define µ∗ ∈ RK by
+                                                                             −1
+                                 µ∗ := −∇w f (w∗ , z∗ ) [Dw h (w∗ , z∗ )]         .
+
+Then,
+                        K
+                        X
+                              µ∗k ∇hk (x∗ ) = µ∗ Dw h (w∗ , z∗ ) = −∇w f (w∗ , z∗ ) ,
+                        k=1
+
+which gives (3). It remains to show (4). Define F : V → R as F (z) := f (b(z), z) for all z ∈ V . Since
+f has a local maximum at (w∗ , z∗ ) = (b(z∗ ), z∗ ), F also has a local maximum at z∗ . Since V is
+open, z∗ is an unconstrained local maximum of F and the first-order conditions for an unconstrained
+maximum implies that ∇F (z∗ ) = 0; i.e.,
+
+          0 = ∇F (z∗ ) = ∇w f (b (z∗ ) , z∗ ) Db (z∗ ) + ∇z f (b (z∗ ) , z∗ )
+                                                                             
+                                                               −1
+                       = ∇w f (w∗ , z∗ ) − [Dw h (w∗ , z∗ )] Dz h (w∗ , z∗ ) + ∇z f (w∗ , z∗ )
+
+                        = ∇z f (w∗ , z∗ ) + µ∗ Dz h (w∗ , z∗ ) ;
+
+i.e., we have shown (4).                                                                             ■
+
+Remark 7. The condition (1) is called the constraint qualification under equality constraints and
+plays a central role in the proof to deliver the existence of the Lagrange multipliers µ∗ ∈ RK .
+Remark 8. Just as in the case of unconstrained optimisation, there exist second-order conditions
+that allows one to distinguish between local maximum and local minimum in equality constrained
+optimisation problem that are similar to Propositions (2) and (3).2 Importantly, they have similar
+limitations as in the unconstrained case.
+  2 See, for example, Sundaram Theorem 5.4.
+
+
+
+
+                                          -5-
+ECON 6170                                   Fall 2024                    6. Static Optimisation
+
+
+3.2     Necessity: Inequality constraints
+Let f : R → R be concave and C1 and consider the following problem:
+
+                                                max f (x) s.t. x ≥ 0.
+                                                 x∈R
+
+
+Ignoring the constraint, the solution x satisfies the first-order condition
+
+                                                        f ′ (x) = 0.
+
+There are three cases to consider: (i) x < 0; (ii) x = 0; and (iii) x > 0. Let x∗ denote the solution
+to the constrained problem. In each of the three cases (try drawing!), we have
+
+  (i) x∗ = 0 and f ′ (x∗ ) < 0;
+
+ (ii) x∗ = 0 and f ′ (x∗ ) = 0;
+
+ (iii) x∗ > 0 and f ′ (x∗ ) = 0.
+
+Observe that the product of the two, i.e., x∗ f ′ (x∗ ), is zero in all three cases. However, x∗ f ′ (x∗ ) = 0
+is not a sufficient condition as you can see from case (iii). There, we see that the point x = 0 at
+which f ′ (x) > 0 also satisfies the condition, yet x is not an optimum. To rule this case out, we
+must add that f ′ (x∗ ) ≤ 0. Together with the constraint itself, observe that we have identified three
+conditions:
+
+                                                     x∗ f ′ (x∗ ) = 0,
+                                                        f ′ (x∗ ) ≤ 0,
+                                                             x∗ ≥ 0.
+
+We will see that all these conditions are also important when we generalise the problem to multivariate-
+many-constraints case.
+
+Theorem 2 (KKT Theorem). Let f : Rd → R and gj : Rd → R be C1 for each j ∈ {1, . . . , J}.
+Suppose x∗ is a local maximum of f on the constraint set
+
+                                  Γ := x ∈ Rd : gj (x) ≥ 0 ∀j ∈ {1, . . . , J} .
+                                      
+
+
+Let E ⊆ {1, . . . , J} denote the set of binding constraints at x∗ and let gE := (gj )j∈E . Suppose that3
+
+                                               rank (DgE (x∗ )) = |E| .                                                 (5)
+   3 Recall that any matrix X ∈ Rm×n can be viewed as a collection of (row or column) vectors. Thus, we can
+
+consider the linear space that the vectors span. The linear space spanned by the columns of X is the column space
+of X. The column rank of X is the rank of the column space of X (recall that rank of a linear space equals the
+cardinality of (any) basis of that space). The linear space spanned by the rows of X, i.e., span({x1 , . . . , xm }), is the
+row space of X. The row rank of X is the rank of the row space of X. Finally, recall that column and row ranks are
+equal.
+
+
+
+
+                                               -6-
+ECON 6170                                      Fall 2024                      6. Static Optimisation
+
+
+Then, there exists λ∗ = (λ∗j )Jj=1 ∈ RJ such that
+
+                                                                    λ∗j ≥ 0 ∀j ∈ {1, . . . , J} ,                      (6)
+                                                           λ∗j gj (x∗ ) = 0 ∀j ∈ {1, . . . , J} ,                      (7)
+                                                 J
+                                                 X
+                                 ∇f (x∗ ) +            λ∗j ∇gj (x∗ ) = 01×d .                                          (8)
+                                                 j=1
+
+
+If x∗ is a local minimum of f on Γ, then (8) becomes ∇f (x∗ ) −                                     ∗       ∗     ⊤
+                                                                                         P
+                                                                                               j∈J λj ∇gj (x ) = 0 .
+
+Proof. Let x∗ be a local maximum of f on the set Γ such that (5) holds. Let E denote the set of
+binding constraints at x∗ . We want to show that there exists λ∗ ∈ RJ such that: (i) λj ≥ 0 and
+                                                               PJ
+λj hj (x∗ ) = 0 for all j ∈ {1, . . . , J}; and (ii) ∇f (x∗ ) + j=1 λj ∇gj (x∗ ) = 0.
+   With the exception of the nonnegative of the vector λ∗ we can proceed as in the proof of
+Theorem of Lagrange. Without loss of generality, suppose that the first J ∗ := |E| constraints are
+binding and that the last J − J ∗ constraints are slack. For each j ∈ {1, . . . , J}, define
+
+                                               Vj := x ∈ Rd : gi (x) > 0 ,
+                                                    
+
+                    TJ
+and define V :=        j=J ∗ +1 Vi .    Because gi is continuous, Vj is open for each j ∈ {1, . . . , J} (why?)
+and so V is also open (why?). Let Γ∗ ⊆ Γ be the equality-constrained set given by
+
+                              Γ∗ := V ∩ x ∈ Rd : gj (x) = 0 ∀j ∈ {1, . . . , J ∗ } .
+                                       
+
+
+By construction, x∗ ∈ Γ∗ . Since x∗ is a local maximum of f on Γ, it is also a local maximum of f
+                                                                                                                 ∗
+on Γ∗ . Together with (5), by the Theorem of Lagrange, there exists a vector µ∗ ∈ RJ such that
+                                                             ∗
+                                                           J
+                                                           X
+                                                   ∗
+                                             ∇f (x ) +            µ∗j ∇gj (x∗ ) = 01×d .
+                                                            j=1
+
+
+Define λ∗ = (λ∗j )Jj=1 ∈ RJ as
+                                                  
+                                                  µ∗        if j ∈ {1, . . . , J ∗ }
+                                                       j
+                                         λ∗j :=                                            .
+                                                  0         if j ∈ {J ∗ + 1, . . . , J}
+
+We will show that λ∗ satisfies the required properties. First, observe that
+                                                                                 ∗
+                                   J
+                                   X                                           J
+                                                                               X
+                             ∗
+                      ∇f (x ) +              λ∗j ∇gj (x∗ ) = ∇f (x∗ ) +              µ∗j ∇gj (x∗ ) = 01×d ;
+                                       j=1                                     j=1
+
+
+i.e., (8) is satisfied. Since gj (x∗ ) = 0 for all j ∈ {1, . . . , J ∗ }, λj gj (x∗ ) = 0 for all j ∈ {1, . . . , J ∗ }.
+For j ∈ {J ∗ + 1, . . . , J}, we have λ∗j = 0 so that λj gj (x∗ ) = 0. Hence, we’ve shown (7). It remains
+to show (6). By construction of λ∗ , it suffices to show that λ∗j ≥ 0 for all j ∈ {1, . . . , J ∗ }. Let us
+first show that λ∗1 ≥ 0. To this end, define x ∈ Rd and γ ∈ R, and functions G = (G1 , . . . , GJ ∗ ) :
+
+
+
+
+                                                  -7-
+ECON 6170                                   Fall 2024                 6. Static Optimisation
+
+
+              ∗
+Rd+1 → RJ by
+
+                                        G1 (x, γ) := g1 (x) − γ,
+                                        Gj (x, γ) := gj (x) ∀j ∈ {2, . . . , J ∗ } .
+
+Let DGx denote the (J ∗ × d matrix) derivative of G with respect to the x variables alone and let
+∇Gγ denote the (k × 1 matrix) derivative of G with respect to γ. Note that Dx G(·, γ) = DgE (·)
+and ∇γ G(x, ·) = (−1, 0, . . . , 0) for all x ∈ Rd . By definition of G, G(x∗ , 0) = 0J ∗ ×1 and rank of
+
+                                 rank (Dx G (x∗ , γ)) = rank (DgE (x∗ )) = |E| = J ∗ .
+
+By the Implicit Function Theorem, there exits an open ball around 0 ∈ R denoted B and a function
+ξ : B → Rd that is C1 such that ξ(0) = x∗ and
+
+                                               G (ξ (γ) , γ) = 0 ∀γ ∈ B.
+
+Treating both sides of the equation as functions of γ and differentiating both sides and evaluation
+at ξ(0) = x∗ gives
+
+             Dx G (x∗ , 0) Dξ (0) + ∇γ G (x∗ , 0) = 0 ⇔ DgE (x∗ ) Dξ (0) + (−1, 0, . . . , 0) =0,
+
+where Dξ is a d × 1 matrix. That is,
+                                                        
+                                                        1 if j = 1
+                                     ∇gj (x∗ ) Dξ (0) =                             .
+                                                        0 if j ∈ {2, . . . , J ∗ }
+
+
+Using (8) and the fact that λj = 0 for all j ∈ {J ∗ + 1, . . . , J},
+                                                               
+                                                 XJ
+                            ∇f (x∗ ) Dξ (0) = −    λj ∇gj (x∗ ) Dξ (0) = −λ1 .
+                                                        j=1
+
+
+To complete the proof we will show that ∇f (x∗ )Dξ(0) ≤ 0 which implies −λ1 ≤ 0 ⇔ λ1 ≥ 0.
+Toward this goal, we first show that there is a γ ∗ > 0 such that for all γ ∈ [0, γ ∗ ), ξ(γ) ∈ Γ; i.e.,
+for each j ∈ {1, . . . , J}, gj (ξ(γ)) ≥ 0 for all γ ∈ [0, γ ∗ ). If γ > 0, since Gj (ξ(γ), γ) = 0 for all
+j ∈ {1, . . . , J ∗ }, we have                     
+                                                   γ > 0 if j = 1
+                                      gj (ξ (γ)) =                                 .
+                                                   0     if j ∈ {2, . . . , J ∗ }
+
+For j ∈ {J ∗ + 1, . . . , J}, we have gj (ξ(0)) = gj (x∗ ) > 0. Since both gj and ξ are continuous, we can
+choose γ sufficiently small, say γ ∈ (0, γ ∗ ), such that
+
+                                        gj (ξ (γ)) > 0 ∀j = {J ∗ + 1, . . . , J} .
+
+We have thus shown that there exists γ ∗ > 0 such that ξ(γ) ∈ Γ for all γ ∈ [0, γ ∗ ).
+  Because ξ(0) = x∗ is a local maximum of f on Γ and ξ(γ) ∈ Γ for all γ ∈ [0, γ ∗ ), it follows that
+
+
+
+                                               -8-
+ECON 6170                               Fall 2024                    6. Static Optimisation
+
+
+for γ sufficiently close to 0, we must have
+
+                                                f (x∗ ) ≥ f (ξ (γ))
+
+Rearranging gives and dividing both sides by γ > 0 gives
+
+                                    f (ξ (γ)) − f (x∗ )   f (ξ (γ)) − f (ξ (0))
+                               0≥                       =
+                                             γ                      γ
+
+Taking limits as γ ↘ 0, above gives us that
+
+                                  0 ≥ ∇f (ξ (0)) Dξ (0) = ∇f (x∗ ) Dξ (0) .
+
+Hence, we have now shown that λ1 ≥ 0. Analogous argument shows that λ∗j ≥ 0 for all j ∈
+{2, . . . , J ∗ } and the proof is complete.                                                               ■
+
+Remark 9. Suppose d = 1 and the only constraint is the nonnegativity constraint; i.e., J = 1 and
+g1 (x) = x. Then, KKT first-order conditions become
+
+                                     λ∗1 ≥ 0, λ∗1 x∗ = 0, f ′ (x∗ ) = −λ∗1
+
+and so we can write it as
+                                         f ′ (x∗ ) ≤ 0, x∗ f ′ (x∗ ) = 0,
+
+and, of course, we must have g1 (x∗ ) = x∗ ≥ 0. These are the exact conditions we had before!
+      The properties (6), (7) and (8) are together referred to as the KKT first-order conditions. Let
+us go through the theorem carefully.
+
+Complementary slackness (7) is referred to as the complementary slackness conditions. Since
+gj (x) ≥ 0 from the constraint and λ∗j ≥ 0, (7) tells us that: (i) if gj (x∗ ) > 0, then λ∗j = 0; and (ii) if
+λ∗j > 0, then gj (x∗ ) = 0. That is, if one inequality is not strict (i.e., “slack”), then the other cannot
+be.
+
+Nonnegativity constraints            Suppose that the ℓth constraint is a nonnegativity constraint on
+some xi , i ∈ {1, . . . , d}; i.e., gℓ (x) = xiℓ ≥ 0. Since ∇gℓ (x∗ ) = eiℓ , (8) is given by
+                                                X
+                                ∇f (x∗ ) +               λ∗j ∇gj (x∗ ) − λ∗ℓ eiℓ = 0.
+                                               j∈J\{ℓ}
+
+
+Note that (6) ensures that λ∗ℓ ≥ 0 and, together with (7), we know that if x∗i > 0, then λ∗ℓ = 0.
+Thus, we can rewrite above as: for all i ∈ {1, . . . , d}\{iℓ }
+
+                                   J
+                      ∂f          X       ∂gj ∗      ∂f          X ∂gj
+                          (x∗ ) +     λ∗j     (x ) =     (x∗ ) +  λ∗j     (x∗ ) = 0
+                      ∂xi         j=1
+                                          ∂xi        ∂xi              ∂xi
+                                                                         j̸=ℓ
+
+
+and
+                         ∂f          X ∂gj
+                             (x∗ ) +  λ∗j     (x∗ ) ≤ 0 with equality if x∗iℓ > 0.
+                         ∂xi              ∂xi
+                                      j̸=ℓ
+
+
+
+                                             -9-
+ECON 6170                              Fall 2024                    6. Static Optimisation
+
+
+Constraint qualification The condition (5) is called the constraint qualification. To understand
+this, notice first that we can rewrite (8) as
+                                                      X
+                                      ∇f (x∗ ) =            −λ∗j ∇gj (x∗ ) ;
+                                                                
+
+                                                      j∈J
+
+
+i.e., ∇f (x∗ ) is a linear combination of the gradients ∇g1 (x∗ ), . . ., ∇gJ (x∗ ). Moreover, by com-
+plimentary slackness, since λj = 0 for all non-binding constraints, ∇f (x∗ ) is, in fact, a linear
+combination of (∇gj )j∈E . Letting E = {1, . . . , |E|}, the constraint qualification is the requirement
+that |E| × d matrix                                                            
+                                            ∂g1   ∗                 ∂g1   ∗
+                                            ∂x1 (x )         ···    ∂xn (x )
+                                                 ..          ..         ..
+                          ∇gE (x∗ ) = 
+                                                                               
+                                                 .             .        .
+                                                                                
+                                                                                
+                                            ∂g|E|  ∗                ∂g|E|  ∗
+                                             ∂x1 (x )        ···     ∂xn (x )   |E|×d
+
+                                  ∗
+has rank |E|. Since rank(∇gE (x )) ≤ min{|E|, d}, this is possible only if d ≥ |E|. One implication
+of the rank qualification is therefore that the {∇gj }j∈E are linearly independent.
+
+Example 1. Let f, g : R2 → R be given by f (x, y) := −(x2 + y 2 ) and g(x, y) := (x − 1)3 − y 2 ,
+respectively. Consider the problem of maximising f on Γ := {(x, y) ∈ R2 : g(x, y) ≥ 0}. Let us
+argue that solution to this constrained problem is (x∗ , y ∗ ) = (1, 0). first, the function f reaches
+a maximum when x2 + y 2 reaches a minimum. Since the constraint requires (x − 1)3 ≥ y 2 , and
+y 2 ≥ 0 for all y ∈ R, the smallest absolute value of x in the constraint set is x = 1. And the
+smallest absolute value of y in the constraint set is y = 0. Thus, (x∗ , y ∗ ) = (1, 0). Observe that the
+constraint is binding at the optimum. Note that
+                                                                
+                                                          2
+                               Dg (x∗ , y ∗ ) = 3 (x∗ − 1) , 2y ∗ = (0, 0)
+
+so that it has rank less than the number of binding constraints (i.e., 1). Thus, the constraint
+qualification fails in this case. Moreover, we have
+
+                                Df (x∗ , y ∗ ) = (−2x∗ , −2y ∗ ) = (−2, 0)
+
+and so there cannot exist λ ≥ 0 such that Df (x∗ , y ∗ ) + λDg(x∗ , y ∗ ) = (0, 0); i.e., conclusion of
+Theorem 2 also fails.
+
+Remark 10. Since any equality constraints can be written as a two inequality constraints (i.e.,
+hk (x) = 0 if and only if hk (x) ≥ 0 and −hk (x) ≥ 0), Theorem 3 can be applied to optimisation
+problems with both equality and inequality constraints. However, recall that for constraint qual-
+ification to be satisfied, we must have d ≥ |E|, where |E| is the number of binding constraints.
+Thus, treating equality constraints as inequality constraints may lead to violation of constraint
+qualification. Luckily, we can treat equality constraints separately from inequality constraints.
+
+Theorem 3. Let f : Rd → R and gj : Rd → R be C1 for each j ∈ {1, . . . , J}. Suppose x∗ is a local
+maximum of f on the constraint set
+
+              Γ := x ∈ Rd : hk (x) = 0 ∀k ∈ {1, . . . , K} , gj (x) ≥ 0 ∀j ∈ {1, . . . , J}
+                  
+
+
+
+
+                                        - 10 -
+ECON 6170                                   Fall 2024                   6. Static Optimisation
+
+
+Let E ⊆ {1, . . . , J} denote the set of binding constraints at x∗ and let gE := (gj )j∈E . Suppose that4
+                                                   "              #!
+                                                        h (x)
+                                        rank D                         = K + |E| .                                      (9)
+                                                       gE (x∗ )
+
+Then, there exists µ∗ ∈ RK and λ∗ = (λ∗j )Jj=1 ∈ RJ such that
+
+                                                                            λ∗j ≥ 0 ∀j ∈ {1, . . . , J} ,             (10)
+                                                                  λ∗j gj (x∗ ) = 0 ∀j ∈ {1, . . . , J} ,              (11)
+                                  K
+                                  X                       J
+                                                          X
+                     ∇f (x∗ ) +         µ∗k ∆hk (x∗ ) +         λ∗j ∇gj (x∗ ) = 0⊤ .                                  (12)
+                                  k=1                     j=1
+
+
+3.3     Sufficiency: Inequality constraints
+As in the first-order condition for unconstrained problems, the KKT first-order conditions are only
+necessary for a local maximum or a local minimum and not sufficient.
+
+Example 2. Suppose f (x) = x3 with the constraint that g(x) := x ≥ 0. As noted above x∗ = 0 is
+not a local maximum or a minimum. At x = 0, the constraint is binding so that E = {1}. Then,
+g ′ (x∗ ) = 1 = |E| so that constraint qualification is satisfied. Moreover, λ∗ = 0 satisfies the KKT
+first-order conditions since
+
+                                                                        2
+                                     f ′ (x∗ ) + λ∗ ∇g (x∗ ) = 3 (0) + 0 · 1 = 0.
+
+Theorem 4 (Sufficiency of KKT with concavity). Let f : Rd → R and gj : Rd → R for each
+j ∈ {1, . . . , J} are all be C1 and concave. Suppose there exists λ∗ = (λ∗j )Jj=1 ∈ RJ that satisfies the
+KKT first-order conditions; i.e., (6), (7) and (8). Then, x∗ is a global maximum of f on on the
+constraint set Γ := {x ∈ Rd : gj ≥ 0 ∀j ∈ {1, . . . , J}}.
+
+Proof. Let us prove an interim result first. Say that a point y ∈ Rd points into set X ⊆ Rd at
+x ∈ X if there is ω > 0 such that (x + ηy) ∈ X for all η ∈ (0, ω).
+
+Lemma 1. Suppose X ⊆ Rd is a convex set and f : X → R is a concave function. Then, x∗
+maximises f on X if and only if Dy f (x∗ ) ≤ 0 for all y pointing into X at x∗ .
+
+Proof. Suppose x∗ maximises a concave f : X → R on a convex X ⊆ Rd . Let y ∈ Rd point into X
+at x∗ . Since x∗ is the maximiser, we have f (x∗ ) ≥ f (x∗ + ηy) for all η > 0 such that x∗ + ηy ∈ X
+(and such η exists for sufficiently small η). Rearranging and taking limits yields
+
+                                             f (x∗ + ηy) − f (x∗ )
+                                    0 ≥ lim                        = Dy f (x∗ )
+                                         η↘0          η
+
+as desired.
+   4 Recall that any matrix X ∈ Rm×n can be viewed as a collection of (row or column) vectors. Thus, we can
+
+consider the linear space that the vectors span. The linear space spanned by the columns of X is the column space
+of X. The column rank of X is the rank of the column space of X (recall that rank of a linear space equals the
+cardinality of (any) basis of that space). The linear space spanned by the rows of X, i.e., span({x1 , . . . , xm }), is the
+row space of X. The row rank of X is the rank of the row space of X. Finally, recall that column and row ranks are
+equal.
+
+
+
+
+                                              - 11 -
+ECON 6170                              Fall 2024                6. Static Optimisation
+
+
+   Conversely, suppose Dy f (x∗ ) ≤ 0 for all y pointing into X at x∗ . If x∗ does not maximise f on
+X, there exists z ∈ X with f (z) > f (x∗ ). Let y := z − x∗ . Then, since x∗ + 1 · y ∈ X and X is
+convex, y points into X at x∗ . But for η ∈ (0, 1), because f is concave,
+
+                            f (x∗ + η (z − x∗ )) = f ((1 − η) x∗ + ηz)
+                                                   ≥ (1 − η) f (x∗ ) + ηf (z)
+                                                   = f (x∗ ) + η [f (z) − f (x∗ )]
+
+so that
+                           f (x∗ + η (z − x∗ )) − f (x∗ )
+                                                          ≥ f (z) − f (x∗ ) > 0.
+                                         η
+Observe that left-hand side converges to Dy f (x∗ ) as η ↘ 0 so that Dy f (x∗ ) > 0; a contradiction.
+                                                                                                            ■
+
+   We prove the sufficiency part first by using the fact that if a function is differentiable at a point,
+then directional derivative exists in all directions and is given by the dot product of the partial
+derivatives and the direction. So suppose there exists λ∗ ∈ RJ+ that satisfies the KKT first-order
+conditions. Let
+                                       Vj := x ∈ Rd : gj (x) ≥ 0 .
+                                            
+
+
+Suppose x1 , x2 ∈ Xj , Pick any λ ∈ (0, 1) and let z := λx1 + (1 − λ)x2 . Because gj is concave,
+                                                      TJ
+Xj is convex for all j ∈ {1, . . . , J} (why?). Hence, j=1 Vj = Γ is also convex (why?). Since f is
+concave, all that remains to show is that ∇f (x∗ )y ≤ 0 for all y pointing into X at x∗ and we can
+then appeal to the lemma above. Suppose some y points into Γ at x∗ . We will show that, for each
+j ∈ {1, . . . , J}, we have λ∗j ∇gj (x∗ )y ≥ 0, which by (8), would imply ∇f (x∗ )y ≤ 0. Observe that,
+by definition of y, there exists ϵ > 0 such that x∗ + ty ∈ X for all t ∈ (0, ϵ). By our choice of Γ, it
+follows that gj (x∗ + ty) ≥ 0 for all j ∈ {1, . . . , J} for all t ∈ (0, ϵ). Fix any j ∈ {1, . . . , J}. There
+are two possibilities: either gj (x∗ ) > 0 or gj (x∗ ) = 0. In the first case, λ∗j = 0 by (7) and so clearly
+λ∗j ∇gj (x∗ )y ≥ 0. In the second case, we have
+
+                                   gj (x∗ + ty) − gj (x∗ )
+                                                           ≥ 0 ∀t ∈ (0, ϵ) .
+                                              t
+
+Taking limits as ϵ ↘ 0, we obtain Dy g(x∗ ) = ∇gj (x∗ )y ≥ 0. Since λ∗j ≥ 0 by (6), we have
+λ∗j ∇gj (x∗ )y ≥ 0.                                                                                         ■
+
+Remark 11. One can show that if f and gj ’s are all C1 and concave and the following condition,
+called Slater’s condition, holds
+
+                                   ∃x ∈ Rd , gj (x) > 0 ∀j ∈ {1, . . . , J} .                            (13)
+
+Then, KKT first-order conditions are both necessary and sufficient. That is, the Slater’s condition
+can be used as an alternative to the constraint qualification condition to ensure that KKT first-order
+conditions are necessary (when f and gj ’s are all concave).
+
+Theorem 5 (Sufficiency of KKT with quasiconcavity). Let f : Rd → R and gj : Rd → R for each
+j ∈ {1, . . . , J be C1 and quasiconcave. Suppose there exists x∗ ∈ Rd and λ ∈ RJ that satisfy all
+
+
+                                         - 12 -
+ECON 6170                                Fall 2024                6. Static Optimisation
+
+
+the constraints (i.e., x∗ ∈ Γ := {x ∈ Rd : gj ≥ 0 ∀j ∈ {1, . . . , J}}) and satisfy the KKT first-order
+conditions (i.e., (6), (7) and (8)). Then, x∗ maximises f on Γ provided that at least one of the
+following condition holds:
+                                         ∇f (x∗ ) ̸= 0 or f is concave.                             (14)
+
+Proof. First observe that the set Xj := {x ∈ Rd : gj (x) ≥ 0} is convex because gj is quasiconcave
+                     TJ
+(why?). Thus, X := j=1 Xj is also convex.
+
+Lemma 2. Under the hypothesis of the theorem, ∇f (x∗ )(y − x∗ ) ≤ 0 for all y ∈ X.
+
+Proof. By hypothesis, we have
+
+                                                       J
+                                                       X
+                             ∇f (x∗ ) (y − x∗ ) = −          λj ∇gj (x∗ ) (y − x∗ ) .
+                                                       j=1
+
+
+It suffices to show that λj ∇gj (x∗ )(y − x∗ ) ≥ 0 for each j ∈ {1, . . . , J} and any y ∈ X. Fix
+j ∈ {1, . . . , J} and y ∈ X. We have that either gj (x∗ ) > 0 or gj (x∗ ) = 0. In the first case,
+λ∗j = 0 by (7) and so clearly λ∗j ∇gj (x∗ )(y − x∗ ) = 0. In the second case, because X is convex,
+x∗ + t(y − x∗ ) = (1 − t)x∗ + ty ∈ X for all t ∈ (0, 1). Because gj is quasiconcave,
+
+                             gj ((1 − t) x∗ + ty) ≥ min {gj (x∗ ) , gj (y)} ≥ 0
+
+so that (recall gj (x∗ ) = 0),
+                                           gj ((1 − t) x∗ + ty) − gj (x∗ )
+                                      0≤                                   .
+                                                          t
+Taking limits as t ↘ 0 establishes that Dy−x∗ g(x∗ ) = ∇g(x∗ )(y − x∗ ) ≥ 0. Since λ∗j ≥ 0 from (6),
+it follows that λ∗j ∇gj (x∗ )(y − x∗ ) ≥ 0.                                                           ■
+
+    Suppose first that ∇f (x∗ ) ̸= 0. Then, there exists w ∈ Rd such that ∇f (x∗ )w < 0. Let
+z := x∗ + w so that ∇f (x∗ )(z − x∗ ) < 0. Pick any y ∈ X. For t ∈ (0, 1), let
+
+                             y (t) := (1 − t) y + tz, x (t) := (1 − t) x∗ + tz.
+
+Fixing any t ∈ (0, 1), we have
+
+                                 ∇f (x∗ ) (x (t) − x∗ ) = t∇f (x∗ ) (z − x∗ ) < 0
+
+and, by lemma above, we also have
+
+                          ∇f (x∗ ) (y (t) − y∗ ) = (1 − t) ∇f (x∗ ) (y − x∗ ) ≤ 0.
+
+Summing the inequalities yield
+                                           ∇f (x∗ ) (y (t) − x∗ ) < 0.
+
+Toward a contradiction, suppose that f (y(t)) ≥ f (x∗ ). Since f is quasiconcave, for any α ∈ (0, 1),
+
+           f (x∗ + α (y (t) − x∗ )) = f ((1 − α) x∗ + αy (t)) ≥ min {f (x∗ ) , y (t)} = f (x∗ ) .
+
+
+
+
+                                           - 13 -
+ECON 6170                             Fall 2024               6. Static Optimisation
+
+
+Hence,
+                           f (x∗ + α (y (t) − x∗ )) − f (x∗ )
+                                                              ≥ 0 ∀α ∈ (0, 1) .
+                                           α
+Taking limits as α ↘ 0 (recall f is continuous), the left-hand side converges to Dy(t)−x∗ f (x∗ ) =
+∇f (x∗ )(y(t) − x∗ ) ≥ 0, which is a contradiction. Hence, we must have f (y(t)) < f (x∗ ). Since
+this holds for all t ∈ (0, 1), taking limits as t → 1, we have f (y) ≤ f (x∗ ) which establishes the
+optimality of x∗ .
+   Suppose now that f is concave. By repeating the arguments in the proof for the sufficiency of
+KKT with concavity, we can show that ∇f (x∗ )y ≤ 0 for all y pointing into X at x∗ . Since f is
+concave and X is convex, Lemma (1) then establishes that x∗ is optimal.                              ■
+
+Remark 12. Observe that Theorem 5 does not give necessary conditions for x∗ to be an op-
+timum—indeed the conditions in the theorem are not necessary unless, for example, the constraint
+qualification is met at x∗ .
+
+Exercise 4. Let f, g : R → R be given by
+                                       
+                                       
+                                       
+                                        x3        if x < 0
+                                       
+                               f (x) := 0          if 0 ≤ x ≤ 1 , g (x) := x.
+                                       
+                                       
+                                       (x − 1)2
+                                       
+                                                   if x > 1
+
+Verify that f and g are both C1 and quasiconcave and that f is not concave. Show that, for any
+x∗ ∈ [0, 1], we can find λ∗ ≥ 0 such that (x∗ , λ∗ ) satisfies the KKT first-order conditions. Finally,
+argue that no x∗ ∈ [0, 1] can be a solution to the constrained optimisation problem of maximising
+f on Γ := {x ∈ R : g(x) ≥ 0}. What can you conclude about Theorem 5 from this?
+
+Remark 13. Recall that the set of maximisers do not change when we transform the objective
+function using a strictly increasing function. Hence, even if f is not concave, if we can apply a
+strictly increasing transformation of f that is concave, then we can apply the theorem above to
+obtain the maximisers.
+
+
+
+
+                                        - 14 -
+

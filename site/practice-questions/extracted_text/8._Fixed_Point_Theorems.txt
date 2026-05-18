@@ -1,0 +1,850 @@
+                                  8. Fixed Point Theorems
+                                            Takuma Habu
+                                        takumahabu@cornell.edu
+
+                                           19th November 2024
+
+
+1      Recap
+A fixed point of a self-mapping function f : X → X is a point x ∈ X such that f (x) = x. For
+example, if X = [0, 1], fixed points are all the points in the image of f that lie on the 45 degree
+line. We have already seen a fixed point theorem when you covered Euclidean topology.
+
+Proposition. Suppose f : [0, 1] → [0, 1] is continuous. Then, f has a fixed point.
+
+     We present a number of fixed point theory that are commonly used in economics; e.g., proving
+existence of equilibrium in games. With a notable exception of the Contraction Mapping Theorem,
+most fixed point theory tells us that there is a solution, but not how to obtain that solution.
+
+
+2      Lattice1
+Theorem 1 (Tarski’s fixed point thereom). Suppose (X, ≥) is a compete lattice and a self-map
+f : X → X is an increasing function; i.e., x > x′ ⇒ f (x) ≥ f (x′ ). Then, f has a fixed point; i.e.,
+there exists x∗ ∈ X such that f (x∗ ) = x∗ . Moreover, the set of fixed point is a complete lattice so
+that it contains a smallest and largest fixed point.
+
+Proof. We will only show that: (i) there is a largest fixed point, and (ii) any nonempty subset of
+fixed points has an infimum in the set of all fixed points.
+    (i) Define Z := {x ∈ X : f (x) ≥ x}. Since X is complete, inf X ∈ X and because f is a self-map
+on X, f (x) ≥ inf X for all x ∈ X. In particular, f (inf X) ≥ inf X so that inf X ∈ Z; i.e., Z is
+nonempty. Since Z ⊆ X, by completeness of X, sup Z ∈ X and by definition, sup Z ≥ z for all
+z ∈ Z. Since f is increasing and by definition of Z, we must have
+
+                                        f (sup Z) ≥ f (z) ≥ z ∀z ∈ Z.
+
+Therefore, f (sup Z) is an upper bound of Z. By definition, sup Z is the least upper bound of Z and
+so f (sup Z) ≥ sup Z. Since f is increasing, we also have f (f (sup Z)) ≥ f (sup Z); i.e., f (sup Z) ∈ Z.
+By definition sup Z, it follows that sup Z ≥ f (sup Z). Hence, sup Z is a fixed point. This must also
+be the greatest fixed point because any fixed point must be contained in Z.
+    1 The section is based on lecture notes by Federico Echenique and John Quah.
+
+
+
+
+                                                        1
+ECON 6170                             Fall 2024            8. Fixed Point Theorems
+
+
+   (ii) Let E ⊆ X be the set of fixed points of f , which is nonempty by part (i), and fix any
+nonempty subset E ⊆ E. Define Y := {x ∈ X : inf E ≥ x} (set of lower bounds of E). We proceed
+as follows: (1) show that Y is a complete lattice; (2) f restricted to Y , denoted f |Y , is a self-map
+on Y ; (3) conclude from part (i) that f |Y has a greatest fixed point e ∈ E that that equals inf E so
+that inf E ∈ E.
+   (1) We wish to show that for any nonempty subset S ⊆ Y , sup S ∈ Y and inf S ∈ Y . Fix
+a nonempty S ⊆ Y . Since S ⊆ X and X is a complete lattice, sup S ∈ X and inf S ∈ X. By
+definition of Y , inf E ≥ y for all y ∈ Y so that inf E is an upper bound of Y . Because sup Y is
+the least upper bound, we must have inf E ≥ sup Y and so sup Y ∈ Y . Because S ⊆ Y , we must
+have sup Y ≥ sup S so that inf E ≥ sup S; i.e., sup S ∈ Y . Since sup S ≥ inf S, we must also have
+inf S ∈ Y .
+   (2) For any e ∈ E, we have e ≥ inf E so that e = f (e) ≥ f (inf E); i.e., f (inf E) is a lower
+bound of E. Since inf E is the greatest lower bound of E, we must have inf E ≥ f (inf E) so
+that f (inf E) ∈ Y . Moreover, for all y ∈ Y , inf E ≥ y so that inf E ≥ f (inf E) ≥ f (y). Hence,
+f |Y : Y → Y ; i.e., f |Y is a self-map on Y .
+   (3) Since f |Y is an increasing self-map on a complete lattice Y , by (i), it has a greatest fixed
+point e ∈ Y . Since e must be fixed point of f , we have e ∈ E. Moreover, if e ∈ E is a lower bound
+on E, inf E ≥ e so that e ∈ Y . Then, e is a fixed point of f |Y and we must have e ≥ e. Hence, e is
+the greatest lower bound of E in E; i.e., e = inf E ∈ E.                                             ■
+
+Remark 1. The proof of the theorem tells us that the largest fixed point is given by sup{x ∈ X :
+f (x) ≥ x} and the smallest fixed point is given by inf{x ∈ X : x ≥ f (x)}.
+
+Exercise 1. Complete the proof of Theorem 1; i.e., show that there is a smallest fixed point and
+any nonempty subset of fixed points has a supremum in the set of all fixed points.
+
+   Since (X = [0, 1], ≥) is a complete lattice, the following is immediate.
+
+Corollary 1. Every increasing self-map on [0, 1] has a fixed point.
+
+   The requirement that f is increasing is crucial. Try drawing functions f : [0, 1] → [0, 1] that is
+decreasing and increasing and see how they can/cannot cross the 45 degree line (fixed point are the
+points on the 45 degree line).
+
+Proposition 1. Suppose (X, ≥) is a complete lattice, (Θ, ≥) is a partially ordered, and f : X ×Θ →
+X is such that f (x, θ) increasing in x for any given θ ∈ Θ and increasing in θ for any given x ∈ X.
+Then, the largest and the smallest fixed points of f (·, θ) exist and they are increasing in θ.
+
+Proof. We only show that the largest fixed point is increasing in θ. Fix θ′′ > θ′ . Since f (x, θ) is
+increasing in θ for any x ∈ X, f (x, θ′′ ) ≥ f (x, θ′ ), which, in turn, implies that
+
+                    Z ′ := {x ∈ X : f (x, θ′ ) ≥ x} ⊆ {x ∈ X : f (x, θ′′ ) ≥ x} =: Z ′′ .
+
+By Tarski’s fixed point theorem, the largest fixed points in Z ′ and Z ′′ exist and, in fact, are given
+by x(θ′ ) := sup Z ′ and x(θ′′ ) := sup Z ′′ . Since Z ′ ⊆ Z ′′ , we must have x(θ′′ ) ≥ x(θ′ ).      ■
+
+Exercise 2. Show that the smallest fixed point is also increasing in θ in the proposition above.
+
+
+
+                                         -2-
+ECON 6170                                   Fall 2024               8. Fixed Point Theorems
+
+
+2.1      Example: Pure-strategy Nash equilibria in quasi-supermodular games
+Definition 1. A (complete information) game is a tuple (N, (Si , ui )i∈N ), where N := {1, . . . , n}
+is the set of players, Si is the set of player i ∈ N ’s strategies, and ui : S → R is player i’s utility
+when players choose strategy profile s ∈ S := ×i∈N Si . A game is quasi-supermodular if:
+
+    each Si is a subcomplete sublattice of Rdi ;
+
+    ui (si , s−i ) is quasi-supermodular in si ∈ Si for any s−i ∈ S−i ;2
+
+    ui (si , s−i ) has single-crossing differences in (si , s−i ).
+
+A strategy profile s∗ ∈ S is a pure-strategy Nash equilibrium of a game (N, (Si , ui )i∈N ) if, for all
+i ∈ N,
+                                         ui s∗i , s∗−i ≥ ui si , s∗−i ∀si ∈ Si .
+                                                                    
+
+
+Theorem 2. Fix a quasi-supermodular game (N, (Si , ui )i∈N ) and assume that, for all i ∈ N ,
+ui (·, s−i ) is continuous for all s−i ∈ S−i . Quasi-supermodular games have pure-strategy Nash
+equilibria.
+
+Proof. Denote player i ∈ N ’s best response to s−i ∈ S−i as
+
+                                           Bi (s−i ) := arg max ui (si , s−i ) .
+                                                           si ∈Si
+
+
+Since Si is compact (why?) and ui (·, s−i ) is continuous, Bi (s−i ) is nonempty by extreme value
+theorem. The theorem of the maximum also gives that Bi (s−i ) is compact. Moreover, the fact
+that ui (, s−i ) is quasi-supermodular means that Bi (s−i ) is a sublattice (why?). Together, these
+imply that Bi (s−i ) is a subcomplete sublattice and thus contains its supremum and infimum. The
+monotone comparative statics theorem implies that that if s′−i ≥ s−i , then
+
+                          sup Bi s′−i ≥ sup Bi (s−i ) and inf Bi s′−i ≥ inf Bi (s−i ) .
+                                                                    
+
+
+Thus, sup Bi and inf Bi are both increasing. Define B, B : S 7→ S by B(s) := (sup Bi (s−i ))i∈N and
+B(s) := (inf Bi (s−i ))i∈N . Since the product set of complete lattices is a complete lattice, that Si is
+                                                        Q
+a complete lattice (by assumption), means that S := i∈N Si is also a complete lattice. Since B(s)
+and B(s) are both increasing functions, by Tarski’s fixed point theorem, there exist s∗ , s∗ ∈ S such
+that s∗ = B(s∗ ) and s∗ = B(s∗ ). Thus, not only there exists a Nash equilibrium, there also exists
+the largest and the smallest Nash equilibria.                                                                  ■
+
+Remark 2. In fact, we know that s∗ = sup{s ∈ S : B(s) ≥ s} and s∗ = inf{s ∈ S : B(s) ≤ s}.
+
+Proposition 2. Fix a quasi-supermodular game (N, (Si , ui )i∈N ) and assume that, for all i ∈ N ,
+ui (·, s−i , , θi ) is continuous for all s−i ∈ S−i and all θi ∈ Θi where (Θi , ≥) is a partially ordered
+set. Suppose ui (si , s−i , θi ) obeys single-crossing differences in (si , (s−i , θi )) for all i ∈ N . Then,
+the largest and the smallest Nash equilibria of the game are both increasing in (θi )i∈N .
+  2 Recall that s
+                    −i refers to the strategy of all players other than i and so s−i ∈ S−i := ×j∈N \{i} Sj .
+
+
+
+
+                                               -3-
+ECON 6170                                 Fall 2024              8. Fixed Point Theorems
+
+
+Proof. Since ui (si , s−i , θi ) obeys single-crossing differences in (si , (s−i , θi )), and ui is quasi-supermodular
+in si , then, by the monotone comparative static theorem, we have that
+
+                             Bi s′′−i , θi′′ ≥S Bi s′−i , θi′ ∀ s′′−i , θi′′ ≥ s′−i , θi′ .
+                                                                                      
+
+
+Hence, this implies that sup Bi (s−i , θi ) and inf Bi (s−i , θi ) are both increasing in θi . By the previous
+result, the largest Nash equilibrium of the game parameterised by θ is sup{s ∈ S : B(s, θ) ≥ s},
+where B(s, θ) ≡ (sup Bi (s−i , θi ))i∈N . Since sup Bi is increasing in θi ,
+
+                                          B (s, θ′′ ) ≥ B (s, θ′ ) ∀θ′′ > θ′ ,
+
+Hence,
+                           s ∈ S : B (s, θ′ ) ≥ s ⊆ s ∈ S : B (s, θ′′ ) ≥ s         ∀θ′′ > θ′ ,
+                                                  
+
+
+which implies that
+
+                   sup s ∈ S : B (s, θ′′ ) ≥ s ≥ sup s ∈ S : B (s, θ′ ) ≥ s             ∀θ′′ > θ′ .
+                                                   
+
+
+Similarly for the smallest Nash equilibrium.                                                                   ■
+
+
+2.2      Example: Stable matching
+Definition 2. A one-to-one matching market is a tuple (M, W, (≿m )m∈M , (≿w )w∈W ) where
+
+  (i) M and W are disjoint finite sets;
+
+ (ii) for each m ∈ M ≿m is a total order over W ∪ {∅} such that for any distinct w, w′ ∈ W ∪ {∅},
+      w ≿m w′ or w′ ≿m w but not both;
+
+ (iii) for each w ∈ W , ≿w is a total order over M ∪ {∅} such that for any distinct m, m′ ∈ M ∪ {∅},
+      m ≿m m′ or m′ ≿m m but not both.
+
+For any m ∈ M , w ∈ W is acceptable to m if w ≿m ∅. Analogously, for any w ∈ W , m ∈ M is
+acceptable to w if m ≿m ∅. A fantasy is a function ν : M ∪ W → M ∪ W such that
+
+                      ν (m) ∈ W ∪ {∅} ∀m ∈ M and ν (w) ∈ M ∪ {∅} ∀w ∈ W.
+
+Let V denote the set of all fantasies. For any two fantasies ν, ν ′ ∈ V , we say that ν is less than ν ′ ,
+denoted ν ≤ ν ′ if
+
+                        ν ′ (m) ≿m ν (m) ∀m ∈ M and ν (w) ≿w ν ′ (w) ∀w ∈ W.
+
+Lemma 1. (V, ≤) is a lattice.
+
+Proof. Take any ν, ν ′ ∈ V . We want to show that ν ∨ ν ′ ∈ V and ν ∧ ν ′ ∈ V . We only show
+the first. For any m ∈ M , since ≿m is a total order, there exists wm ∈ W ∪ {∅} such that
+ν m = sup{ν(m), ν ′ (m)}. Similarly, for any w ∈ W , there exists mm ∈ M ∪ {∅} such that mw =
+sup{ν(w), ν ′ (w)}. Then, (ν ∨ ν ′ )(m) = wm and (ν ∨ ν ′ )(w) = mw for all m ∈ M and all w ∈ W
+and clearly ν ∧ ν ′ ∈ V .                                                                                      ■
+
+
+                                             -4-
+ECON 6170                              Fall 2024             8. Fixed Point Theorems
+
+
+Definition 3. A matching is a fantasy µ with the property that
+
+                               w = µ (m) ⇔ µ (w) = m ∀m ∈ M ∀w ∈ W.
+
+A matching µ is individually rational if µ(a) ≿a ∅ for all a ∈ M ∪ W . A pair (m, w) ∈ M × W is a
+blocking pair for µ if m ≻w µ(w) and w ≻m µ(m). A matching is stable if it is individually rational
+and there are no blocking pairs.
+
+Remark 3. The canonical example is the marriage market (M for men and W for women).3 We
+will follow this example purely for historical reasons.
+   For any fantasy ν and any m ∈ M and w ∈ W ,
+
+                                 A (m, ν) := {w′ ∈ W : m ≿w′ ν (w′ )} ,
+                                  A (w, ν) := {m′ ∈ M : w ≿m′ ν (m′ )} .
+
+For example, A(m, ν) is the set of women who would prefer to match with m over the man specified
+by the fantasy ν. Define a function T : V → V by letting (T ν)(m) be the optimal choice according
+to ≿m in A(m, ν) ∪ {∅} for any m ∈ M ; i.e., for all m ∈ M ,
+
+                                     (T ν) (m) ≿m w ∀w ∈ A (m, ν) .
+
+Similarly, let (T ν)(w) being the optimal choice according to ≿w in A(w, ν) ∪ {∅} for any w ∈ W ;
+i.e., for all w ∈ W ,
+                                      (T ν) (w) ≿w m ∀m ∈ A (w, ν) .
+
+By construction, T is a self-map and so to apply Tarski’s fixed point theorem, we need to show that
+T is increasing.
+
+Lemma 2. T is monotone increasing; i.e., for any ν ≤ ν ′ , we have T ν ≤ T ν ′ .
+
+Proof. Fix ν ≤ ν ′ and some m ∈ M , and take any w ∈ A(m, ν). Then, m ≿w ν(w) ≿w ν ′ (w) so that
+w ∈ A(m, ν ′ ). Hence, A(m, ν) ⊆ A(m, ν ′ ). Analogous argument shows that A(w, ν ′ ) ⊆ A(w, ν).
+Since the best element from a larger set cannot be worse than from a smaller set, (T ν ′ )(m) ≿m
+(T ν)(m) and (T ν)(w) ≿w (T ν ′ )(w). Hence, T ν ≤ T ν ′ .                                        ■
+
+Lemma 3. Any fixed point of T is a stable matching. If µ is a stable matching, then it is a fixed
+point of T .
+
+Proof. Suppose that ν ∈ V is a fixed point of T ; i.e., ν = T ν. We first show that ν is a matching.
+Toward a contradiction, suppose there exists (m, w) ∈ M × W with w = ν(m) and m ̸= ν(w) (the
+proof for the other case is analogous). By definition of A(m, ν), that w = ν(m) implies m ∈ A(w, ν).
+So, m ̸= ν(w) = T ν(w) means that ν(w) ≻w m. But then m ∈
+                                                        / A(w, ν) which contradicts that
+w = ν(m) = (T ν)(m). We now argue that ν is stable. By construction, ν is individually rational
+as ν(a) = (T ν)(a) ≿a ∅ for any a ∈ M ∪ W . Fix some (m, w) ∈ M × W . If m ≻w ν(w), then
+w ∈ A(m, ν). By definition of T , (T ν)(m) = ν(m) ≿m w and so w ̸≻m ν(m); i.e., (m, w) cannot be
+a blocking pair.
+  3 The seminar paper is Gale and Shapley (1962) which perhaps explains the labelling.
+
+
+
+
+                                          -5-
+ECON 6170                            Fall 2024          8. Fixed Point Theorems
+
+
+    Conversely, let µ be a stable matching. We wish to show that µ = T µ. By way of contradiction,
+suppose there exists an element of A(m, µ) ∪ {∅} that is strictly better than µ(m) for ≿w . By
+individual rationality, µ(a) ≿a ∅ for all a ∈ M ∪W so this element cannot be ∅. So let w ∈ A(m, µ)
+be such that w ≻m µ(m). We obtain a contradiction if we can show that (m, w) forms a blocking
+pair. To that end, note that, w ̸= µ(m) implies that m ̸= µ(w) as µ is a matching. Then,
+w ∈ A(m, µ) implies that m ≻w µ(w) because m ≿w µ(w) and ≿w is a strict preference. Then,
+(m, w) would form a blocking pair.                                                                  ■
+
+Theorem 3. The set S ⊆ V of stable matching is nonempty and (S, ≤) is a lattice. Moreover,
+there exists two stable matchings µM and µW such that, for any stable matching µ,
+
+                     µM (m) ≿m µ (m) ≿m µW (m) and µW (w) ≿w µ (w) ≿w µM (w)
+
+for all m ∈ M and all w ∈ W .
+
+Proof. By Tarski’s fixed point theorem, we know that T , as an increasing self-map on V , has a fixed
+point. By the previous lemma, this fixed point is a stable matching. Hence, S is nonempty. That
+(S, ≤) is a lattice also follows from the fact that set of fixed points of T forms a complete lattice.
+It also follows that there is a largest and smallest fixed points, µM and µW with the properties
+above.                                                                                              ■
+
+Remark 4. Above establishes that there are men-preferred and women-preferred stable matchings.
+
+Exercise 3. Prove that the set of stable matching is a sublattice of (V, ≤) and that, for any two
+stable matchings µ and µ′ : (i) (µ ∨ µ′ )(m) is preferred with respect to ≿m over µ(m) and µ′ (m);
+(ii) (µ ∧ µ′ )(m) is the worse with respect to ≿m than µ(m) and µ(m′ ).
+
+Remark 5. The “usual” proof of the theorem is a constructive one—by running a deferred acceptance
+algorithm (DAA).
+
+
+3     Continuity
+Here are the two fixed point theorem that is commonly used in economics that exploits continuity
+in functions.
+
+Theorem 4 (Brouwer’s fixed point theorem). Let X ⊆ Rd be nonempty, compact and convex.
+Suppose that f : X → X is continuous. Then, f has a fixed point; i.e., there exists x∗ ∈ X such
+that x∗ = f (x∗ ).
+
+    While Brouwer’s fixed point theorem deals with functions, Kakutani’s fixed point theorem deals
+with correspondences. We state the theorem without proof.
+
+Theorem 5 (Kakutani’s fixed point theorem). Let X ⊆ Rd be nonempty, compact and convex.
+Suppose that f : X ⇒ X is nonempty, closed-valued, convex-valued and upper hemicontinuous.
+Then, F has a fixed point; i.e., there exists x∗ ∈ S such that x∗ ∈ F (x∗ ).
+
+
+
+
+                                       -6-
+ECON 6170                                 Fall 2024                        8. Fixed Point Theorems
+
+
+3.1     Example: Mixed-strategy Nash equilibrium
+We prove the existence of a mixed-strategy Nash equilibrium using Brouwer’s theorem and also
+using Kakutani’s theorem.
+
+Definition 4. A game G = (N, (Si , ui )i∈N ) is finite if Si is finite for all i ∈ N . A mixed extension
+of G, denoted G, is a tuple (N, (∆Si , ūi )N
+                                            i=1 ), where
+                                                 (                                         )
+                                                                        X
+                                     ∆Si :=          σi ∈ RS+i :                σi (si ) = 1
+                                                                       si ∈Si
+
+
+and ui : ×N
+          i=1 ∆Si → R is defined
+                                                                                
+                                                 X               N
+                                                                 Y
+                          ui (σi , σ−i ) :=                           σj (sj ) σi (si ) ui (si , s−i ) .
+                                              (si ,s−i )∈S       j=1
+
+
+A mixed-strategy Nash equilibrium of G is a Nash equilibrium of the mixed extension of G; i.e.,
+σ ∗ ∈ ∆S such that
+                                      ui σi∗ , σ−i
+                                                ∗
+                                                     ≥ ui (σi , σi∗ ) ∀σi ∈ ∆Si .
+                                                   
+
+
+Remark 6. In the mixed extension of the game, players are allowed to randomise over pure strategies
+and σi (si ) specifies the probability with each player i plays si ∈ Si . Note that σi = (σi (si ))si ∈Si ;
+i.e., each player’s mixed strategy is a vector of probabilities.
+
+Theorem 6 (Existence of Nash equilibrium). Let G be a finite game, then there exists a mixed-
+strategy Nash equilibrium.
+
+   We give two proofs of this result. The first relies on the Brouwer’s fixed point theorem. The
+second relies on Kakutani’s fixed point theorem. Let us establish some intermediate results that
+we need in both cases.
+
+Lemma 4. For each i ∈ N , ∆Si is convex. Therefore, ∆S is convex.
+
+Proof. Take any σi , σi′ ∈ ∆Si any λ ∈ (0, 1). Then,
+
+                              λσi + (1 − λ) σi′ = (λσi (si ) + (1 − λ) σi (si ))si ∈Si ,
+
+where
+                                         λσi (si ) + (1 − λ) σi (si ) ∈ [0, 1]
+
+and
+               X                                                  X                            X
+                        λσi (si ) + (1 − λ) σi (si ) = λ                  σi (si ) + (1 − λ)            σi (si ) = 1.
+               si ∈Si                                            si ∈Si                        si ∈Si
+
+Hence, λσi + (1 − λ)σi′ ∈ ∆(Si ); i.e., ∆Si is convex. Since ∆S is a product set of convex set, it is
+also convex.                                                                                                            ■
+
+Lemma 5. For each i ∈ N , ∆Si is compact. Therefore, ∆S is compact.
+
+Proof. By Balzano-Wierstrass Theorem, it suffices to show that ∆Si is closed and bounded. ∆Si
+is clearly bounded (by a vector of zeros and ones). To show that ∆Si is closed, take any sequence
+
+
+                                                -7-
+ECON 6170                                           Fall 2024                   8. Fixed Point Theorems
+
+
+(σi,k )k in ∆Si such that σi,k → σi . Since 0 ≤ σi,k (si ) ≤ 1 for all si ∈ Si and k ∈ N, we must
+                                              P
+have 0 ≤ σi (si ) ≤ 1. Moreover, since          si ∈Si σi,k (si ) = 1 for all k ∈ N, we must also have
+P
+  si ∈Si σi (si ) = 1. That is, σi ∈ ∆Si so that ∆Si is closed.                                     ■
+
+Proof using Brouwer’s theorem. We first prove the result using Brouwer’s theorem.4 Define ∆S :=
+×i∈N Si and f : ∆S → ∆S as follows: for any σ ∈ ∆S, for each player i ∈ N and each si ∈ Si ,
+
+                                                    σi (sij ) + max {0, ui (δsi , σ−i ) − ui (σ)}
+                                  fi (σ, si ) :=       P                                        ,
+                                                   1 + s′ ∈Si max 0, ui δs′i , σ−i − ui (σ)
+                                                            i
+
+
+
+where δsi ∈ ∆Si is such that δ(s′i ) = 1 if and only if s′i = si . For each i ∈ N , define fi (σ) :=
+(fi (σ, si ))si ∈Si and f (σ) := (fi (σ))i∈N . Observe that, for any i ∈ N ,
+                                        X
+                                                 fi (σ, si ) = 1 and fi (σ, si ) ≥ 0 ∀si ∈ Si .
+                                        si ∈Si
+
+
+Hence, fi (σ) ∈ ∆Si for all i ∈ N and f (σ) ∈ ∆S. That is, f is a self-map on ∆S. Moreover, observe
+that fi (·, si ) is continuous for each si ∈ Si (numerator and the denominators are both continuous
+and the denominator is bounded away from zero). Thus, f is a continuous self-map on ∆S that is
+nonempty, compact and convex. The Brouwer’s fixed point theorem gives a point σ ∗ that is a fixed
+point of f ; i.e., f (σ ∗ ) = σ ∗ and fi (σ ∗ , si ) = σi∗ (si ) for all i ∈ N and all si ∈ Si . In other words,
+                         X
+            σi∗ (si )                               ∗
+                                                         − ui (σ ∗ ) = max 0, ui δsi , σ−i
+                                                                                        ∗
+                                                                                             − ui (σ ∗ ) .
+                                                                                        
+                                  max 0, ui δs′i , σ−i
+                        s′i ∈Si
+
+                                     ∗
+Multiplying both sides by ui (δsi , σ−i ) − ui (σ ∗ ) and summing over si gives
+                 X                                             X
+                          σi∗ (si ) ui δsi , σ−i
+                                              ∗
+                                                   − ui (σ ∗ )                      ∗
+                                                                                         − ui (σ ∗ )
+                                                                                    
+                                                                  max 0, ui δs′i , σ−i
+                si ∈Si                                                s′i ∈Si
+                           X 
+                                        ∗
+                                             − ui (σ ∗ ) max 0, ui δsi , σ−i
+                                                                          ∗
+                                                                               − ui (σ ∗ ) .
+                                                                          
+                         =    ui δsi , σ−i
+                             si ∈Si
+
+                                                                               ∗                             ∗                 ∗
+                                                                    P                            P
+Observe that the left-hand side is zero because                        si ∈Si σi (si ) = 1 and       si ∈Si σi (si )ui (δsi , σ−i ) =
+ui (σ ∗ ). Hence,
+                              X 
+                                           ∗
+                                                − ui (σ ∗ ) max 0, ui δsi , σ−i
+                                                                             ∗
+                                                                                  − ui (σ ∗ ) .
+                                                                             
+                    0=           ui δsi , σ−i
+                             si ∈Si
+
+                                                                        ∗
+But the summation on the right-hand side can be zero only if ui (δsi , σ−i ) ≤ ui (σ ∗ ) for all si ∈ Si
+                                             ∗                                           ∗
+and all i ∈ N . But any σi ∈ ∆Si , ui (σi , σ−i ) is a convex combination of {ui (δsi , σ−i )}si ∈Si so we
+must have ui (σ ∗ ) ≥ ui (σi , σ−i
+                                ∗
+                                   ) for all σi ∈ ∆Si . Thus, σ ∗ is a mixed-strategy Nash equilibrium. ■
+
+Proof using Kakutani’s theorem. For any i ∈ N , define the best response correspondence by
+
+                                                   Bi (σ−i ) := arg max ui (σi′ , σ−i ) .
+                                                                 σi′ ∈∆Si
+
+
+Notice that Bi implies the equilibrium condition for player i. Since ui is linear in σi by construction,
+  4 The proof is from Jehle and Reny.
+
+
+
+
+                                                       -8-
+ECON 6170                              Fall 2024               8. Fixed Point Theorems
+
+
+it is continuous. Moreover, ∆Si is compact so that by the theorem of maximum, Bi is nonempty,
+compact-valued and upper hemicontinuous on ∆S−i := ×j̸=i ∆Sj . Moreover, since ui is linear in σ,
+Bi is convex-valued as well (i.e. Bi (σi , σ−i ) is convex for all σi ∈ ∆Si ). Define B : ∆S ⇒ ∆S by
+
+                                           B (σ) := (Bi (σ−i ))i∈N .
+
+Then B inherits the properties of Bi ’s so that B is a nonempty-, compact-, convex-valued, upper-
+hemicontinuous correspondence. Since ∆S is compact and convex, we can then appeal to Kakutani’s
+fixed point theorem to conclude that there exists σ ∗ ∈ ∆S such that σ ∗ ∈ B(σ ∗ ) and σ ∗ is a mixed-
+strategy Nash equilibrium.                                                                             ■
+
+
+4      Contraction
+Definition 5. A metric on an nonempty set X is a function ρ : X 2 → R that satisfies the following
+conditions:
+
+     (nonnegativity) ρ(x, y) ≥ 0 ∀x, y ∈ X;
+
+     (identity of indiscernibles) ρ(x, y) = 0 ⇔ x = y;
+
+     (symmetry) ρ(x, y) = ρ(y, x) ∀x, y ∈ X;
+
+     (triangle inequality) ρ(x, y) ≤ ρ(x, z) + ρ(y, z) ∀x, y, z ∈ X.
+
+A metric space is a pair (X, ρ) where X is a nonempty set and ρ is on X.
+
+Example 1 (Examples of metric spaces). ‌
+
+    (i) Euclidean metric space. (Rd , ∥ · ∥d ), where ∥ · ∥d is the Euclidean distance given by
+                                                      v
+                                                      u d
+                                                      uX            2
+                                           ∥x − y∥d = t   (xi − yi ) .
+                                                             i=1
+
+
+ (ii) Discrete metric space. (X, ddiscrete ), where X ̸= ∅ and
+
+                                              ddiscrete (x, y) = 1{x̸=y} .
+
+
+(iii) Product metric spaces. If (X, ρX ) and (Y, ρY ) are metric spaces, then (X × Y, ρ) is a metric
+       space where
+                                                                       p                  p 1/p
+                          ρ ((x1 , y1 ) , (x2 , y2 )) := [(ρX (x1 , x2 )) + (ρY (y1 , y2 )) ]     (1)
+
+       for any p ≥ 1.
+
+(iv) Space of continuous functions. Given a nonempty set X, let C(X) denote the set of continuous
+       real-valued functions on X. Then, (C(X), ∥ · ∥∞ ) is a metric space, where ∥ · ∥∞ is the sup-
+       norm given by
+                                          ∥f ∥∞ := sup {|f (x)| : x ∈ X} .
+
+
+
+                                          -9-
+ECON 6170                               Fall 2024              8. Fixed Point Theorems
+
+
+Definition 6. Given a metric space (X, ρ), a sequence (xn )n in X is Cauchy if, for any ϵ > 0,
+there exists N ∈ N such that ρ(xn , xm ) < ϵ for all m, n > N. A metric space (X, ρ) is complete if
+every Cauchy sequence is convergent; i.e., if X contains limit points of all Cauchy sequences in X.
+
+Remark 7. Just as when X was a Euclidean space, one can show that (i) every convergent sequence
+is Cauchy but not every Cauchy sequence is convergent; (ii) A sequence in product metric space is
+Cauchy if and only if each component-wise sequence is Cauchy; (iii) Cauchy sequences are bounded
+and has at most one limit point. However, not all metric spaces are complete (e.g., (Q, | · |) is a
+metric space that is not complete).
+
+Fact 1. (C(X), ∥ · ∥∞ ) is a complete metric space.
+
+   Let (X, ρ) be a metric space. A self-map f : X → X is a contraction (with modulus r) if there
+exists r ∈ [0, 1) such that
+                                   ρ (f (x) , f (y)) ≤ rρ (x, y) ∀x, y ∈ X.
+
+Intuitively, the distance between x and y contracts—i.e., shrinks—when we apply the function f
+to both points. Note that r is a Lipchitz constant so that a if f if is contraction then f must
+be continuous. The following establishes that this contraction property of a self-map is sufficient
+to guarantee the existence of a unique fixed point. The result is called the contraction napping
+theorem or the Banach contraction principle.
+
+Theorem 7 (Contraction Mapping Theorem). Let (X, ρ) be a complete metric space and f : X →
+X be a contraction. Then, f has a unique fixed point; i.e., there exists a unique x∗ ∈ X such that
+x∗ = f (x∗ ).
+
+Proof. Fix x0 ∈ X. Define recursively a sequence (xn )n in X by xn+1 := f (xn ). Since f is a
+contraction, for some r ∈ [0, 1), for each n ∈ N,
+
+                                 ρ (xn+1 , xn ) = ρ (f (xn ) , xn )
+                                                = ρ (f (f (xn−1 )) , f (xn−1 ))
+                                                ≤ rρ (f (xn−1 ) , xn−1 )
+
+Note also that
+
+                              ρ (f (xn−1 ) , xn−1 ) = ρ (f (f (xn−2 )) , f (xn−2 ))
+                                                    = rρ (f (xn−2 ) , xn−2 )
+                                 ⇒ ρ (xn+1 , xn ) ≤ r2 ρ (f (xn−2 ) , xn−2 ) .
+
+By induction, we may conclude that
+
+                                      ρ (xn+1 , xn ) ≤ rn ρ (f (x0 ) , x0 ) .                   (2)
+
+   By Triangular Inequality, we have that
+
+                                ρ (xn , xm ) ≤ ρ (xn , z) + ρ (z, xm ) ∀z ∈ X.
+
+
+
+                                          - 10 -
+ECON 6170                               Fall 2024                    8. Fixed Point Theorems
+
+
+Let m = n + 2, then we can let z = xn+1 to obtain that:
+
+                            ρ (xn , xn+2 ) ≤ ρ (xn , xn+1 ) + ρ (xn+1 , xn+2 )
+
+Now suppose m = n + 3, letting z = xn+1 again, we obtain
+
+                           ρ (xn , xn+3 ) ≤ ρ (xn , xn+1 ) + ρ (xn+1 , xn+3 ) .
+
+Consider ρ(xn+1 , xn+3 ), using the Triangular Inequality again with z = xn+2 , we have
+
+                         ρ (xn+1 , xn+3 ) ≤ ρ (xn+1 , xn+2 ) + ρ (xn+2 , xn+3 ) .
+
+Combining the two,
+
+                  ρ (xn , xn+3 ) ≤ ρ (xn , xn+1 ) + ρ (xn+1 , xn+2 ) + ρ (xn+2 , xn+3 ) .
+
+Thus, for any n, m ∈ N with m > n,
+
+                                                          m−1
+                                                          X
+                                       ρ (xn , xm ) ≤           ρ (xn , xn+1 ) .
+                                                          j=n
+
+
+We can now use 2 to obtain that
+                                                       m−1
+                                                       X
+                                      ρ (xn , xm ) ≤         rj ρ (f (x0 ) , x0 ) .
+                                                       j=n
+
+
+Note that
+                   m−1
+                   X            m−1
+                                X            ∞
+                                             X            ∞
+                                                          X
+                         rj ≤         rj +         rj =         rj
+                   j=n          j=n          j=m          j=n
+                                                                            ∞
+                                                                            X
+                           = rn + rn+1 + · · · = rn 1 + r + r2 + · · · = rn   ri
+                                                                      
+                                                                                       i=0
+                              rn
+                           =     .
+                             1−r
+
+Hence, we can write
+                                                        rn
+                                      ρ (xn , xm ) ≤       ρ (f (x0 ) , x0 ) .
+                                                       1−r
+For any ϵ > 0, let N ∈ N be such that
+
+                                              rN
+                                                 r (f (x0 ) , x0 ) = ϵ.
+                                             1−r
+
+Then for any m, n > N , rn , rm < rN (assuming, without loss of generality, m > n) so that
+
+                                          rn                      rN
+                      ρ (xn , xm ) ≤         ρ (f (x0 ) , x0 ) <     ρ (f (x0 ) , x0 ) .
+                                         1−r                     1−r
+
+Hence, (xn )n is a Cauchy sequence. Since (xn )n is a Cauchy sequence and (X, ρ) is complete, then
+
+
+                                          - 11 -
+ECON 6170                              Fall 2024                8. Fixed Point Theorems
+
+
+xn → x∗ ∈ X so that:
+                                    lim ρ (f (xn ) , xn ) = ρ (f (x∗ ) , x∗ ) .
+                                   n→∞
+
+Now, because                                        
+                                                      rn
+                              0 ≤ ρ f (xn ), xn  ≤     ρ (f (x0 ) , x0 ) ,
+                                                
+                                     | {z }          1−r
+                                          =xn+1
+
+as n → ∞, ρ(f (xn ), xn ) → 0. Therefore,
+
+                                 lim ρ (f (xn ) , xn ) = ρ (f (x∗ ) , x∗ ) = 0;
+                                n→∞
+
+
+so that x∗ = f (x∗ ).
+   For uniqueness, suppose that x∗ = f (x∗ ) and y ∗ = f (y ∗ ) for some x∗ , y ∗ ∈ X. Then,
+
+                               ρ (x∗ , y ∗ ) = ρ (f (x∗ ) , f (y ∗ )) ≤ rρ (x∗ , f ∗ )
+
+which implies that ρ (x∗ , y ∗ ) = 0 (since r ̸= 0) and hence x∗ = y ∗ .                              ■
+
+Remark 8. Observe that the proof tells us that we can start from any point in X and get to a fixed
+point by iteration. Thus, unlike most other fixed point theorems, Contraction Mapping Theorem
+tells us how to find the unique fixed point as well as proving its existence. You will use this property
+a lot in dynamic programming (e.g., in macroeconomics although these can crop up in IO as well
+as in dynamic games).
+   Let us give some sufficient conditions for a function to be a contraction.
+
+Proposition 3 (Blackwell’s Test). Let X be a compact metric space. Suppose that W : C(X) →
+C(X) is a self-map on C(X). Then, W is a contraction with modulus β if
+
+  (i) W is increasing, i.e., W (f ) ≥ W (g) for all f, g ∈ C(X) such that f ≥ g;
+
+ (ii) for all (f, α) ∈ C(X) × R+ , there exists β ∈ (0, 1) such that W (f + α) ≤ W (f ) + βα.
+
+Proof. Suppose that f ≥ g, which implies that f + ∥f − g∥∞ ≥ g. Since W is increasing, this
+implies that
+
+                                       W (f + ∥f − g∥∞ ) ≥ W (g) .
+
+Using property (ii),
+                          W (f ) + β ∥f − g∥∞ ≥ W (f + ∥f − g∥) ≥ W (g) ,
+
+which rearranges to
+                                      β ∥f − g∥∞ ≥ W (g) − W (f ) .
+
+Now suppose that g ≥ f , then we can obtain that
+
+                                      β ∥f − g∥∞ ≥ W (f ) − W (g) .
+
+That is,
+                                     β ∥f − g∥∞ ≥ |W (f ) − W (g)| .
+
+
+                                          - 12 -
+ECON 6170                                        Fall 2024                            8. Fixed Point Theorems
+
+
+This inequality holds for all x ∈ X, and in particular, it holds for x∗ = arg maxx∈X |W (f ) − W (g)|.
+That is, there exists β ∈ (0, 1) such that
+
+                                                 ρ (W (f ) , W (g)) ≤ βρ (f, g)
+
+so that W is a contraction.                                                                                                             ■
+
+
+4.1        Example: Bellman equation
+In many economic problems, especially when dynamics are considered, the following type of problem
+are of interest: given x0 ∈ X,
+                                                      ∞
+                                                      X
+                       V ∗ (x0 ) =         max
+                                           ∞
+                                                             β t F (xt , xt+1 ) s.t. xt ∈ Γ (xt−1 ) ∀t ∈ N,                            (3)
+                                        (xt )t=0 ⊂X
+                                                      t=0
+
+
+where β ∈ (0, 1), X ⊆ R is a compact metric space, F is bounded and continuous and Γ : X ⇒ X
+is a compact-valued and continuous correspondence. We can interpret equation (3) as follows:
+A forward-looking economic agent is optimising the life-time objective, with the same objective
+function (say utility) in each period, and β being the discount factor. The problem is complicated
+because, in each period, current choice xt may enter into current period flow payoff and the next
+period flow payoff (since F depends on both xt and xt+1 ). Moreover, current choice xt may affect
+the feasible choices in the future (since xt ∈ Γ (xt−1 )). It is well-known that this problem, under
+the conditions provided above, has a solution.
+    We take as given the Principle of Optimality which tells us that we may consider the first-period
+decision separately, setting aside all future decisions.5 So consider the choice of x1 by rearranging
+equation (3) as below:
+
+                                                                      ∞
+                                "                      "                                                                      ##
+                                                                      X
+       ∗                                                                        t−1
+     V (x0 ) =       max            F (x0 , x1 ) + β        max             β         F (xt , xt+1 ) s.t. xt ∈ Γ (xt−1 ) ∀t ≥ 1    .
+                   x1 ∈Γ(x0 )                              (xt )∞
+                                                                t=1
+                                                                      t=1
+
+
+The inner maximisation problem is, in fact, the value of the t = 1 decision problem, given x1 . Thus,
+we can write the expression above as a recursive definition of the value function V ∗ :
+
+                                         V ∗ (x0 ) =        max [F (x0 , x1 ) + βV ∗ (x1 )] .
+                                                        x1 ∈Γ(x0 )
+
+
+The Bellman operator W : C(X) → C(X) is defined as
+
+                                       W (V ) (x) := max F (x, y) + βV (y) ∀x ∈ X.
+                                                           y∈Γ(x)
+
+
+By the Contraction Mapping Theorem (Theorem 7), if W is a contraction, since C(X) is a complete
+metric space, there exists a unique fixed point. That is, there exists a unique V : X → X such that
+
+                                              V (x) = max F (x, y) + βV (y) ,                                                          (4)
+                                                             y∈Γ(x)
+
+   5 We need Γ to be non-empty valued, lim
+                                                               Pnt
+                                                       n→∞ t=0 β F (xt , xt+1 ) exists for all x0 ∈ X and (x0 , x1 , . . .) ∈ Γ(x0 )
+(i.e., all feasible plans can be evaluated) and the solution to Bellman equation satisfies the transversality condition
+limn→∞ β n V (xn ) = 0 holds for all (x0 , x1 , . . .) ∈ Γ(x0 ) and all x0 ∈ X.
+
+
+
+                                                      - 13 -
+ECON 6170                            Fall 2024               8. Fixed Point Theorems
+
+
+which then implies that V = V ∗ . This gives a useful characterisation of the solution of the problem
+equation (3), which we call equation (4) the Bellman equation.
+   To show that the Bellman operator is a contraction, we can use the Blackwell’s test.
+Claim 1. The Bellman operator
+
+                            W (V ) (x) := max F (x, y) + βV (y) ∀x ∈ X
+                                          y∈Γ(x)
+
+
+is a contraction.
+
+Proof. First, if β > 0, then, V (x) ≥ V ′ (x) for all x ∈ X implies that
+
+           W (V ) (x) = max F (x, y) + βV (y) ≥ max F (x, y) + βV ′ (y) = W (V ′ ) (x)
+                         y∈Γ(x)                           y∈Γ(x)
+
+
+so that W is increasing. For α ∈ R+ ,
+
+                           W (V + α) (x) = max F (x, y) + β [V (y) + α]
+                                          y∈Γ(x)
+                                                                
+                                         = max F (x, y) + V (y) + βα
+                                                 y∈Γ(x)
+
+                                           = W (V ) (x) + βα.
+
+Since both conditions of the Blackwell’s test are satisfied, we conclude that W is a contraction. ■
+
+Remark 9. Define g(x) as the policy function that solves the right-hand side of (4). We do not
+(at the moment) know whether V is differentiable. However, by our monotone comparative statics
+results, if F has single-crossing differences in (y, x) and Γ is increasing (in the set-inclusion order),
+then the objective function of the problem has single-crossing differences. If we also know that the
+objective function is quasi-supermodular in y for all x, then it follows that g(x) is increasing in x.
+
+
+
+
+                                       - 14 -
+

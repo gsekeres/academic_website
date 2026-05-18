@@ -1,0 +1,318 @@
+=== page-048 ===
+36
+Chapter 1
+Here the mixed strategies are the (Borel) probability measures over the
+pure strategies, which we endow with the topology of weak convergence.?4
+Once more, the proof applies a fixcd-point theorem to the reaction corre-
+spondences. As we remarked above, the introduction of mixed strategies
+again makes the strategy spaces convex, the payoffs linear in own strategy
+and continuous in all strategies (when payoffs are continuous functions of
+the pure strategies, they are continuous in the mixed strategies as well24),
+and the reaction correspondences convex-valued. With infinitely many
+pure strategies, the space of mixed strategies is infinite-dimensional, so a
+more powerful fixed-point theorem than Kakutani's is required. Alterna-
+tively, one can approximate the strategy spaces by a sequence of finite grids.
+Nash's theorem, each grid has a mixed-strategy equilibrium. One
+then argues that, since the space of probability measures is weakly compact,
+the sequence of these discrete equilibria has an accumulation point. Since
+the payolls are continuous, it is easy to verify that the limit point is an
+cquilibrium.
+We have already seen that pure-strategy equilibria need not exist when
+payoffs are discontinuous. There are many examples to show that in this
+case mixed-strategy equilibria may fail to exist as well. (The oldest such
+example we know of is given in Sion and Wolfe 1957—see exercise 2.2
+helow.) Note: The Glicksberg theorem used above fails because when the
+pure-strategy payoffs are discontinuous the mixed-strategy payoffs are
+discontinuous too. Thus, as before, best responses may fail to exist for some
+of the opponents' strategies. Section 12.2 discusses the existence of mixed-
+strategy equilibria in discontinuous games and conditions that guarantee
+the existence of pure-strategy equilibria.
+Exercises
+Exercise 1.1* This exercise asks you to work through the characterization
+of all the Nash equilibria of general two-player games in which each player
+has two actions (i.e., 2 × 2 matrix games). This process is time consuming
+but straightforward and is recommended to the student who is unfamiliar
+with the mechanics of determining Nash equilibria.
+Let the game be as illustrated in figure 1.22.
+The pure-strategy Nash equilibria are easily found by testing each cell
+of the matrix; c.g.. (U, L) is a Nash equilibrium if and only if a 2 e and
+h 24
+23. Fix a compact metric space A. A sequence of measures "" on A converges "weakly" to a
+limit a it jf du" → jdu for every real-valued continuous function f on A. The set of
+probability measures on 4 endowed with the topology of weak convergence is compact.
+>4 This isan immediate consequence of the definition of convergence we gave in note 23.
+=== page-049 ===
+Strategic Form and Nash Equilibrium
+37
+U
+D
+L
+a,b
+e,t
+A
+c, d
+g,h
+Figure 1.22
+U
+L
+1,- 1
+R
+3,0
+D
+4.2
+0,-1
+Figure 1.23
+To determine the mixed-strategy equilibria requires more work. Let x be
+the probability player 1 plays U and let y be the probability player 2 plays
+L. We provide an outline, which the student should complete:
+(i) Compute each player's reaction correspondence as a function of his
+opponent's randomizing probability.
+(ii) For which parameters is player i indifferent between his two strategies
+regardless of the play of his opponent?
+(iii) For which parameters does player i have a strictly dominant
+strategy?
+(iv) Show that if neither player has a strictly dominant strategy, and the
+game has a unique equilibrium, the equilibrium must be in mixed strategies.
+(v) Consider the particular example illustrated in figure 1.23.
+(a) Derive the best-response correspondences graphically by plotting
+player i's payoff to his two pure strategies as a function of his opponent's
+mixed strategy.
+(b) Plot the two reaction correspondences in the (x, y) space. What are
+the Nash equilibria?
+Exercise 1.2* Find all the equilibria of the voting game of example 1.5.
+Exercise 1.3 (Nash demand game)* Consider the problem of dividing a
+pie between two players. If we let x and y denote player Is and player
+I's payoffs, the vector (x, y) is feasible if and only if x 2 to. y Zlo, and
+4lx,vy≤ 1, where g is a differentiable function with @g/êx > Dand dyley >
+O (for instance, 4(x, y) = x + y). Assume that the feasible set is convex. The
+point (xy. yo) will be called the status quo. Nash (1950a) proposed axioms
+which implied that the "right" way to divide the pie is the allocation
+(x*,,*) that maximizes the product of the differences from the status quo
+(r - „Ky lo) subject to the feasibility constraint g(x, y) ≤ 1. In his 1953
+=== page-050 ===
+38
+Chapter 1
+paper. Nash looked for a game that would give this axiomatic bargaining
+solution as a Nash equilibrium
+(a) Suppose that both players simultaneously formulate demands x and
+y. Iffx, y) is feasible, each player gets what he demanded. If(x, y) is infeasible,
+player 1 gets to and player 2 gets yo. Show that there exists a continuum of
+pure-strategy equilibria, and, more precisely, that any efficient division
+(x. N) fi.e, feasible and satisfying g(x, y) = 1) is a pure-strategy-equilibrium
+outcome.
+{b) ** Consider Binmore's (1981) version of the Nash "modified demand
+game." The feasible set is defined by × ≥ xo, y ≥ yo, and g(x, y) ≤ z, where
+= has cumulative distribution F on [z, 7] (suppose that Vz, the feasible
+sel is nonempty). The players do not know the realization of = before
+making demands. The allocation is made as previously, after the demands
+are made and a is realized. Derive the Nash-equilibrium conditions. Show
+that when F converges to a mass point at 1, any Nash equilibrium con-
+verges to the axiomatic bargaining solution.
+Exercise 1.4 (Edgeworth duopoly)** There are two identical firms produc-
+ing a homogeneous good whose demand curve is q = 100 - p. Firms
+simultancously choose prices. Each firm has a capacity constraint of K. If
+the lirms choose the same price they share the market equally. If the
+prices are unequal, Pi « Pj, the low-price firm, i, sells min(100 - Pi, K) and
+the high-price firm, j, sells min [max (0, 100 - P; - K), KJ. (There are many
+possible rationing rules, depending on the distribution of consumers'
+preferences and on how consumers are allocated to firms. If the aggregate
+demand represents a group of consumers each of whom buys one unit if
+the price p; is less than his reservation price of r, and buys no units
+otherwise. and the consumer's rescrvation prices are uniformly distributed
+on (0,100], the above rationing rule says that the high-value consumers
+are allowed to purchase at price pi before lower-value consumers are.) The
+cost of production is 10 per unit.
+(a) Show that firm 1's payoff function is
+(P. - 10) min(100 - P.,K),
+(Pr - 10)min(50 K),
+P1 = P2
+(Pr - 10)min(100 - K - PI. K),
+PI>P2:P1<100-K
+0,
+otherwise.
+(b) Suppose 30 < K < 45. (Note that these inequalities are strict.) Show
+that this game does not have a pure-strategy Nash equilibrium by proving
+Ihe following sequence of claims:
+(i) If (P, P2) is a pure-strategy Nash equilibrium, then p, = P2. (Hint: If
+r*P then the higher-price firm has customers (Why?) and so the
+=== page-051 ===
+Strategic Form and Nash Equilibrium
+34
+lower-price firm's capacity constraint is strictly binding. What happens if
+this firm charges a slightly higher price!)
+(ii) If (p. p) is a pure-strategy Nash equilibrium, then p = 10.
+(il) If (p.p) is a pure-strategy Nash equilibrium, then p satisfies p=
+100
+2K.
+(iv) If (p.p) is a pure-strategy Nash equilibrium, then p = 100 - 2K.
+(Hint: If p < 100 - 2K. is a deviation to a price between p and 100 - 2K
+profitable for either firm?)
+(v) Since K> 30, there exists & > 0 such that a price of of • •2K +0
+carns a firm a higher profit than 100 - 2K when the other firm charges
+100 - 2K.
+Note: The Edgeworth duopoly game does satisfy the assumptions of theo-
+rem 1.3 (restrict prices to the set [0, 1001) and so has a mixed-strategy
+equilibrium.
+Exercise 1.5 (final-offer arbitration)* Farber (1980) proposes the follow-
+ing model of final-offer arbitration. There are three players: a management
+(i = 1). a union (i = 2), and an arbitrator (i = 3). The arbitrator must choose
+a settlement te R from the two offers, s, eR and seR. made by the
+management and the union respectively. The arbitrator has exogenously
+given preferences to = - (1 - so). That is, he would like to be as close to
+his "bliss point," So, as possible. The management and the union don't know
+the arbitrator's bliss point; they know only that it is drawn from the
+distribution P with continuous, positive density p on [Sn: So]. The manage-
+ment and the union choose their offers simultancously. Their objective
+functions are u, = - t and u2 = +i, respectively
+Derive and interpret the first-order conditions for a Nash equilibrium.
+Show that the two offers are equally likely to be chosen by the arbitrator.
+Exercise 1.6** Show that the two-player game illustrated in figure 1.24
+has a unique equilibrium. (Hint: Show that it has a unique pure-strategy
+cquilibrium; then show that player 1, say, cannot put positive weight on
+both L' and M; then show that player 1, say, cannot put positive weight n
+both U and D, but not on M, for instance.!
+M
+R
+U
+M
+1.-2
+!
+- 2,1
+0.0
+- 2.1
+1,-2
+0,0
+0,0
+0,0
+1,1
+Figure 1.24
+=== page-052 ===
+40
+Chapter 1
+Exercise 1.7 (public good)* Consider an economy with I consumers with
+"quasi-lincar" utility functions,
+where 1; is consumer is income, x is a public decision (for instance, the
+quantity of a public good), Vlx, O) is consumer i's gross surplus for decision
+r. and 0, is a utility parameter. The monetary cost of decision x is C(x).
+The socially efficient decision is
+Assume (i) that the maximand in this program is strictly concave and (11)
+that for all f i dj, and of
+Condition ii says that the optimal decision is responsive to the utility
+parameter of each consumer. (Condition i is satisfied if x belongs to 18, V
+is strictly concaye in x, and C is strictly convex in x. Furthermore, il A;
+belongs to an interval of R, V, and C are twice differentiable, 2V/2x20, > 0
+or < 0. and x* is an interior solution, then x* is strictly increasing or strictly •
+decreasing in A so that condition (ii) is satisfied as well.)
+Now consider the following "demand-revelation game": Consumers are
+asked to announce their utility parameters simultaneously. A pure strategy
+for consumer i is thus an announcement , of his parameter (0, may differ
+from the true parameter 0). The realized decision is the optimal one for the
+announced parameters x*(ê,....,Ô,), and consumer i receives a transfer
+from a "social planner" equal to
+when K; is a constant.
+Show that telling the truth is dominant, in that any report ê, # e, is
+strictly dominated by the truthful report A, = Ar
+Because each player has a dominant strategy, it does not matter whether
+hoknowsthe other players' utility parameters. Hence, even if the players do
+not know one another's payoffs (see chapter 5), it is still rational for them
+to tell the truth. This property of the dominant-strategy demand-revelation
+mechanisin (called the Groves mechanism) makes it particularly interesting
+in a situation in which a consumer's utility parameter is known only to that
+consumer.
+Exercise 1.8* Consider the following model of bank runs, which is due to
+Diamond and Dybvig (1983). There are three periods (t = 0, 1. 2). There are
+many consumers a continuum of them, for simplicity. All consumers are
+ex unte identical. At date O, they deposit their entire wealth, S1. in a bank.
+=== page-053 ===
+Strategic Form and Nash Equilibrium
+41
+The bank invests in projects that yield SR each if the money is invested for
+two periods, where R > 1. However, if a project is interrupted alter one
+period, it yields only S1 (it breaks even). Each consumer "dies" (or "needs
+money immediately") at the end of date 1 with probability x, and lives for
+two periods with probability 1 - x. He learns which one obtains at the
+beginning of date 1. A consumer's utility is u(cy) if he dies in period 1 and
+ade, tea if he dies in period period where a > O, d" < O, and cy and ca are
+the consumptions in periods 1 and 2.
+An optimal insurance contract (ct, c*) maximizes a consumer's ex ante or
+expected utility. The consumer receives et if he dies at date 1, and otherwise
+consumes nothing at date 1 and receives e* at date 2. The contract satisfies
+xe* + (1 - x)c*/R = 1 (the bank breakseven) and u'(ct) = Ru(<*) (equal-
+ity between the marginal rates of substitution). Note that 1 < c* < ct.
+The issue is whether the bank can implement this optimal insurance scheme
+if it is unable to observe who needs money at the end of the first period.
+Suppose that the bank offers to pay r, = et to consumers who want to
+withdraw their money in period 1. If f e [O, 1] is the fraction of consumers
+who withdraw at date 1, each withdrawing consumer gets r, if fry ≤ 1, and
+gets lif if fr, > 1. Similarly, consumers who do not withdraw at date 1
+receive max 0, R(1 - r./V/(1 - f} in period 2.
+(a) Show that it is a Nash equilibrium for each consumer 1o withdraw at '
+date 1 if and only if he "dies" at that date.
+(b) Show that another Nash equilibrium exhibits a bank run (f = 1).
+(c) Compare with the stag hunt.
+Exercise 1.9* Suppose p(g) = a - hq in the Cournot duopoly game of
+example 1.3.
+{a) Check that the second-order and boundary conditions for equation
+(1.3) are satisfied. Compute the Nash equilibrium.
+(b) Now suppose there are I identical firms, which all have cost function
+"14) = c4; Compute the limit ofthe Nash equilibria as i → sc, Comment.
+Exercise 1.10* Suppose there are 1 farmers, each of whom has the right
+to graze cows on the village common. The amount of milk a cow produces
+depends on the total number of cows, N, grazing on the green. The revenue
+produced by n, cows is n,p(N) for N < N, and i(N) = 0 for N ≥ N, where
+1(0) > O. d <0. and " ≤ 0. Each cow costs c, and cows are perfectly
+divisible. Suppose v(0) > c. Farmers simultaneously decide how many
+cows to purchase; all purchased cows will graze on the common.
+(a) Write this as a game in strategic form.
+(b) Find the Nash equilibrium, and compare it against the social
+optimum.
+(c) Discuss the relationship berween this game and the Cournot oligopoly
+model.
+=== page-054 ===
+42
+Chapter 1
+(This exercise, constructed by R. Gibbons, is based on a discussion in Hume
+1739.J
+Exercise 1.11**
+We mentioned that theorem 1.3, which concerns the
+existence of a mixed-strategy Nash equilibrium when strategy spaces arc
+nonempty, compact subsets of a metric space (R", say) and when the payolf
+functions are continuous, can also be proved by taking a sequence of
+discrete approximations of the strategy spaces that "converge" to it. Go
+through the steps of the proof as carefully as you can.
+Here is a sketch of the proof: Each discrete grid has a mixed-strategy
+equilibrium. By compactness, the soquence of discrete-grid equilibria has
+an accumulation point. Argue that this limit must be an equilibrium of
+the limit game with a continuum of actions. (This relies on the discrete
+grids becoming increasingly good approximations and the payoffs being
+continuous.)
+Exercise 1.12*
+Consider a simultaneous-move auction in which two play-
+ers simultaneously choose bids, which must be in nonnegative integer
+multiples of one cent. The higher bidder wins a dollar bill. If the bids are
+equal, neither player receives the dollar. Each player must pay his own bid,
+whether or not he wins the dollar. (The loser pays too.) Each player's utility
+is simply his net winnings; that is, the players are risk neutral. Construct a
+symmetric mixed-strategy equilibrium in which every bid less than 1.00 has
+à positive probability.
+References
+Aumann. R. 1459. Acceptable points in general conporative n-person games. In Contributions
+to the Theory of Games IV. Princeton University Press.
+Aumann. R. 1987. Correlated equilibrium as an extension of Bayesian rationality. Econome-
+trica 55:1 IX.
+Aumann, R. 1990. Communication need not lead to Nash equilibrium. Mimeo. Hebrew
+U'niversity of Jerusalem.
+Axelrod. R. 1984. The Ecolution of Cooperation. Basic Books,
+Berge. C'. 1963. Topological Spaces. Macmillan.
+Hernheim. D. 1984. Rationalizable strategic hehavior. Econometrica 52: 1007-1028.
+Bernheim. I).. D. Peleg, and M. Whinston. 1987. Coalition-proof Nash equilibria. I: Concepts.
+Journal of Economic Theory. 42: 1-12.
+Bernhcim. D., and M. Whinston. 1987. Coalition-proof Nash equilibria. IT. Applications.
+Journal of Economic Theory 42: 13 22.
+Bertrand, J. IXX3. Théoric mathématique de la richesse sociale. Journal des Savants 499 508.
+Binmore. K. 1981. Nash bargaining theory II. London School of Economics.
+Cournot, A. 1838. Recherches sur les Principes Mathematiques de la Theorie des Richesses.
+Finglish edition: Researches into the Marhematical Principles of the Theory of Wealth. ed.
+N. Bacon (Macmillan, 1897).
+Daskupta, P.and E. Maskin, 1986. The existence of equilibrium in discontinuons economic
+ames. I: Theory. Recien of Economic Studies 53: 1-26.

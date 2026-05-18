@@ -1,0 +1,537 @@
+                                        1. Real Sequences
+                                            Takuma Habu∗
+                                        takumahabu@cornell.edu
+
+                                             26th August 2024
+
+
+
+
+1      Real numbers
+1.1     N, Z, Q, R
+Definition 1. N := {1, 2, . . .} is the set of natural numbers (sometimes 0 is included in N). Z :=
+{. . . , −2, −1, 0, 1, 2, . . .} is the set of integers. Q := {a/b : a ∈ Z, b ∈ N} is the set of rational
+numbers. Finally, R is the set of real numbers.
+
+Remark 1. N is closed under the operations of addition and multiplication; i.e., the sum and the
+product of any two natural numbers is a natural number. However , N is not closed under subtraction
+and division. Z (unlike the natural numbers) is closed under subtraction, but not division. Finally,
+the set of rational numbers, Q is closed under all four operations. However, the set of rational
+numbers is not complete, that is, the rational number line, Q, has a “gap” at each irrational value.
+We have the following relationships:
+
+
+                                                N ⊂ Z ⊂ Q ⊂ R.
+
+We will skip the axioms that defines these sets of numbers and instead take the following charac-
+terising property of R (completeness) as an axiom.
+
+
+1.2     Completeness of R
+Definition 2. Let S be a subset of R (i.e., S ⊆ R). If b ∈ R is such that b ≥ s for every s in S
+(∀s ∈ S), then b is an upper bound of S. If such an upper bound for S exists, then we say S is
+bounded (from) above. Lower bounds are defined analogously. S is bounded if it is bounded above
+and below.
+
+Definition 3. Let S ⊆ R be bounded above. Suppose there exists β such that:
+
+    (i) β is an upper bound of S
+
+ (ii) if γ < β, then γ is not an upper bound of S
+   ∗ Thanks to Giorgio Martini, Nadia Kotova and Suraj Malladi for sharing their lecture notes, on which these notes
+
+are heavily based.
+
+
+
+
+                                                         1
+ECON 6170                                       Fall 2024                         1. Real Sequences
+
+
+Then, β is called the least upper bound of S, or its supremum, written sup S.
+   Symmetrically, suppose S ⊆ R is bounded below. Then, α is the greatest lower bound or infimum
+of S, written inf S, if it is a lower bound of S and if every γ > α is not a lower bound of S.
+
+Exercise 1. Requirement (ii) in the definition of sup S above can be written as: ∀ϵ > 0, ∃s ∈ S
+such that s > sup S − ϵ (why?) What is the equivalent condition for the greatest lower bound?
+
+Exercise 2. Why can we write “the” least upper bound? (Formally, prove that sup S is unique: if
+β and β ′ both satisfy the definition, then β = β ′ .)
+
+Exercise 3. TFU (True, False, Uncertain): If sup S exists, then sup S ∈ S.
+
+Axiom 1 (Completeness Axiom). If S is a nonempty subset of R which is bounded above, then
+sup S exists (in R).
+
+Remark 2. This is not true in, for example, Q: the set S = {x ∈ Q : x2 < 2} is bounded, but the
+                             √
+only candidate for sup S, s = 2, doesn’t belong to Q.
+
+Exercise 4. Let S ⊂ R be nonempty and bounded. Prove that inf S ≤ sup S. What can you say
+if inf S = sup S?
+
+Exercise 5. Recall the formal definition of maximum and minimum of a set (don’t look them
+up—model your definitions on those of supremum and infimum). TFU: Every set (in R) has a
+maximum. Every bounded set has a maximum.
+
+Exercise 6. TFU: If S ⊆ R has a maximum max S, then max S = sup S.
+
+Exercise 7 (PS1). Let S and T be nonempty and bounded subsets of R. TFU: sup(S ∪ T ) =
+max{sup S, sup T }.
+
+
+1.3     Density of Q in R
+Proposition 1 (Archimedean property). If a > 0 and b ∈ R, then there exists an n ∈ N such that
+na > b.
+
+Proof. Suppose instead that there exist a > 0 and b ∈ R such that na ≤ b for all n ∈ N. In
+particular, this means that b is an upper bound for the set S := {na : n ∈ N}. Since S is nonempty
+and S ⊆ R, by the Completeness axiom, s := sup S exists. Since a > 0, s − a < s. Therefore s − a
+in not an upper bound for S, and so s − a < ma for some m ∈ N . Rearranging, s < (m + 1)a: but
+this contradicts that s is an upper bound for s because (m + 1)a is also in S (since m + 1 ∈ N). ■
+
+Proposition 2 (Archimedean property). The set N of natural numbers is unbounded from above
+in R.
+
+Exercise 8. Prove that Proposition 1 and Proposition 2 are equivalent: Proposition 1 follows from
+Proposition 2 and vice versa.
+
+Exercise 9. TFU: If ϵ > 0, then there exists an n ∈ N such that n1 < ϵ < n.
+
+Proposition 3 (Density of Q in R). For any x, y ∈ R with y > x, there exists q ∈ Q such that
+x < q < y.
+
+
+                                                  -2-
+ECON 6170                                          Fall 2024                                 1. Real Sequences
+
+
+Proof. Fix x, y ∈ R such that y > x. By Proposition 1 (set n = y − x and b = 1), there exists an
+n ∈ N such that n(y − x) > 1 ⇔ ny > nx + 1. Let m := min{k ∈ Z : k > na}.1 By definition,
+na < m and na ≥ m − 1 (why?) and so na < m ≤ 1 + na < nb. Letting q := m
+                                                                       n and noting that q
+is rational completes the proof.                                                                               ■
+
+Exercise 10. TFU: If a < b, then there exist infinitely many rationals between a and b.
+
+
+1.4     Extended real numbers
+Definition 4. Let +∞ (or just ∞) be a symbol that satisfies a < +∞ for all a ∈ R. Symmetrically,
+the symbol −∞ satisfies a > −∞, for all a ∈ R. Finally, −∞ < +∞. We call R := R ∪ {−∞, +∞}
+the extended real line.
+
+Remark 3. +∞ and −∞ are not real numbers, so statements on real numbers do not (automatically)
+extend to them. Plausible facts like a + ∞ = ∞, (−∞) + (−∞) = −∞, etc. are true in R. However,
+expressions like +∞ + (−∞), ∞ · 0, etc. are left undefined (just like 1/0 is undefined in R).
+
+Definition 5. Let S ⊆ R be unbounded above. Then we define sup S := +∞. Analogously, if S is
+unbounded below, then inf S := −∞. (A strict reading of the definition of supremum and infimum,
+now in R, shows that these definitions are not new.)
+
+Remark 4. With this last definition and the Completeness axiom, we can say that all subsets of R
+have a supremum and an infimum (possibly in R).
+
+Exercise 11. According to a strict interpretation of the definition of supremum and infimum, what
+are sup ∅ and inf ∅ (where ∅ is the empty set)?
+
+
+2     Sequences
+Definition 6. A sequence (in R) is a function x : N → R. Instead of using the standard notation
+x(n) for functions we use xn . Some (equivalent) notations for a sequence x are:
+
+                            (x1 , x2 , . . .) ≡ (xn )∞
+                                                     n=1 ≡ (xn )n∈N ≡ (xn )n ≡ (xn ).
+
+
+For brevity, we will generally adopt the notation (xn )n if no confusion arise.
+
+Remark 5. You will often see sequences denoted as {xn }∞
+                                                       n=1 . Braces exclusively for sets, which are
+unordered: {2, 3} is the same set as {3, 2}, which are both the same as {2, 3, 2, 2, 2, 3} (with some
+abuse of notation), etc.
+
+Example 1. Consider the sequence (1, −1, 1, −1, . . .) = ((−1)n )∞
+                                                                 n=1 . (Make sure you understand
+the notation on the right hand side of the equality.) Its set of values is {(−1)n : n ∈ N} = {1, −1}.
+Seen as a function, {1, −1} is the range and N is the domain (like it is for all sequences).
+   1 One way to formally prove the existence of m is to prove that every nonempty subset of Z that is bounded from
+
+below has a minimum.
+
+
+
+
+                                                      -3-
+ECON 6170                                         Fall 2024                           1. Real Sequences
+
+
+2.1      Convergence of a sequence
+Definition 7. A sequence (xn )n converges to x ∈ R if: for every ϵ > 0, there exists N ∈ N such
+that n > N implies |xn − x| < ϵ. The point x is called the limit of (xn )n , and we write
+
+                                          lim xn = x or xn → x.
+                                          n→∞
+
+
+Exercise 12. TFU: If a sequence has a limit, then the limit is unique. Hint: recall the triangle
+inequality: |a − b| ≤ |a − c| + |c − b|, for all a, b, c ∈ R.
+
+Proposition 4 (Sandwich rule). Suppose that a sequence (xn )n converges to x and that a ≤ xn ≤ b
+for all n ∈ N for some a, b ∈ R, b > a. Then, a ≤ x ≤ b.
+
+Proof. Suppose that xn ≥ a for all n ∈ N but a > x. Define ϵ := a − x > 0. Since xn → x, there
+exists n ∈ N sufficiently large such that
+
+                                xn − x ≤ |xn − x| < ϵ = a − x ⇒ a > xn ,
+
+which is a contradiction. Symmetric argument for xn ≤ b for all n ∈ N shows that we must also
+have x ≤ b.                                                                                              ■
+
+Exercise 13. Find the limit (if they exist) of the following sequences, or show that they do not
+exist.
+
+  (i) (an )n = ( n1 )n
+
+ (ii) (bn )n = ((−1)n )n
+
+ (iii) (cn )n = ((−1)2n )n
+
+Exercise 14 (PS2). TFU: Suppose (xn ) and (yn ) are Real sequences and that xn → x and yn → y.
+Then, (i) (xn + yn )n → x + y, (ii) xn yn → xy, (iii) xn − yn → x − y, (iv) x1n → x1 ; (v) xynn → xy .
+
+Exercise 15. TFU: a sequence (xn )n converges to x if and only if there exists ϵ > 0 such that all
+terms xn are contained in (x − ϵ, x + ϵ).
+
+Exercise 16. TFU: a sequence (xn )n converges to x if and only if for all ϵ > 0 all but finitely
+many terms xn ’s are contained in (x − ϵ, x + ϵ).
+
+Exercise 17. TFU: a sequence (xn )n converges to x if and only if for all ϵ > 0 infinitely many
+terms are contained in (x − ϵ, x + ϵ).
+
+Exercise 18 (PS2). TFU: a sequence (xn )n converges to x if and only if for all ϵ > 0 infinitely
+many terms are contained in (x − ϵ, x + ϵ), and x is the only number with this property.
+
+2.1.1    Infinite limits
+
+Definition 8. A sequence (xn ) diverges to (or converges to) +∞ if for every M ∈ R there exists
+N ∈ N such that xn ≥ M for all n ≥ N . We write lim xn = +∞ or xn → +∞ as before. Divergence
+to (convergence to) −∞ is defined analogously.
+
+
+
+                                                     -4-
+ECON 6170                                     Fall 2024                          1. Real Sequences
+
+
+Remark 6. Informally, a sequence diverges to +∞ (resp. −∞) if it has arbitrarily large (resp.
+small) elements in its tail.
+
+Exercise 19. TFU: If a sequence does not converge, then it diverges to either +∞ or −∞.
+
+Exercise 20. TFU: Let (xn ) diverge to +∞ and yn → y > 0 (y can be finite or +∞). Then,
+lim xn yn exists (and is ...?).
+
+Exercise 21. TFU: Let (xn ) diverge to +∞ and yn → 0. Then, lim xn yn exists (and is ...?).
+
+2.1.2     Bounded sequences
+
+Definition 9. A sequence (xn ) is bounded if its set of values {xn : n ∈ N} is bounded. Bounded
+above and bounded below are defined in the same manner.
+
+Exercise 22. TFU: Every bounded sequence is convergent.
+
+Exercise 23 (PS2). TFU: Every convergent sequence (with a finite limit) is bounded.
+
+Exercise 24. TFU: A sequence diverges to +∞ if and only if the sequence if unbounded.
+
+2.1.3     Monotone sequences
+
+Definition 10. A sequence (xn )n is nondecreasing if xn ≤ xn+1 , for every n ∈ N. It is strictly
+increasing if xn < xn+1 for every n ∈ N. To avoid ambiguity, I will try not to use the term
+“increasing”. Definitions of nonincreasing and strictly decreasing sequences are analogous. Finally,
+a sequence is monotone if it is either nondecreasing or nonincreasing.
+
+Exercise 25. Complete the following: A sequence is both nondecreasing and nonincreasing if and
+only if it is ....
+
+Proposition 5. If (xn )n is bounded and monotone, then it converges.
+
+Proof. We will prove the statement for a nondecreasing sequence (xn )n . The statement for nonin-
+creasing sequences follow from the fact that (xn )n is nonincreasing if and only if (−xn ) is non-
+decreasing. So suppose (xn )n is bounded and nondecreasing. By the Completeness axiom, u :=
+sup{xn : n ∈ N} < +∞ exists. We want to show that xn → u. Fix any ϵ > 0. Since u − ϵ is
+not an upper bound for (xn )n (why?), there exists N ∈ N such that xN > u − ϵ. Since (xn )n is
+nondecreasing, for all n > N , we also have xn > u − ϵ. By definition of u, xn ≤ u for all n ∈ N.
+Combining these, u − ϵ < xn ≤ u for all n > N and hence |xn − u| < ϵ for all n > N . This proves
+that xn → u.                                                                                      ■
+
+Proposition 6. If (xn )n is unbounded and nondecreasing, then it diverges to +∞. Similarly, if
+(xn )n is unbounded and nonincreasing, then it diverges to −∞.
+
+Proof. Let M > 0. Since {xn : n ∈ N} is unbounded by hypothesis and it is bounded below by x1
+(why?), it must be unbounded above. Then, there exists N ∈ N such that xN > M . Since (xn )n
+is nondecreasing, xn ≥ xN > M for all n > N , which shows that lim xn = +∞. The proof for the
+case in which (xn )n is nonincreasing is analogous..                                              ■
+
+
+
+                                                -5-
+ECON 6170                                             Fall 2024                                      1. Real Sequences
+
+
+Remark 7. Combining these two propositions gives the Monotone Convergence Theorem for Real
+sequences; i.e., all monotone sequences either converge to a finite x ∈ R (either the supremum or
+the infimum of {xn : n ∈ N}) or diverge to ±∞. Thus, if (xn )n is a monotone sequence, lim xn is
+always a meaningful expression. This is particularly useful because we did not compute the limit
+value. A similar thing will happen with Cauchy sequences.
+
+Corollary 1. A monotone sequence (xn )n converges if and only if it is bounded.
+
+
+2.2       Subsequences
+Definition 11. Let (xn ) be a sequence. A subsequence of (xn ) is a sequence obtained by (only)
+deleting elements of (xn ). More formally, a subsequence of (xn ) is any sequence (xnk )k where (nk )k
+is a strictly increasing sequence of non-negative integers.
+
+Exercise 26 (PS2). TFU: If a sequence converges, then every subsequence converges (to the same
+limit).
+
+Exercise 27 (PS2). TFU: If a sequence is bounded, then every subsequence is bounded.
+
+Exercise 28 (PS2). TFU: If a sequence is unbounded, then every subsequence is unbounded.
+
+Exercise 29 (PS2). TFU: If a sequence is unbounded, then it has a subsequence which is bounded.
+
+
+2.3       The Bolzano-Weierstrass theorem
+Proposition 7. Every sequence (xn )n has a monotonic subsequence.
+
+Proof. For each n ∈ N define the set Sn := {xn , xn+1 , . . .}.
+    If S1 has no maximum element,2 then construct a subsequence (xnk )k as follows.
+
+                       n1 := 1
+                       n2 := n1 + min {k ′ ∈ N : xn1 +k′ ≥ xn1 }
+                               .
+                           := ..
+                       nk := nk−1 + min k ′ ∈ N : xnk−1 +k′ ≥ xnk−1
+                                       
+                                                                                 ∀k = 3, 4 . . . .
+
+Observe that xn2 is the first term in (xn1 +1 , xn1 +2 , . . .) that is greater than xn1 = x1 . Moreover,
+xn2 is well-defined because S1 has no maximum—if there weren’t such a term, then xn1 = x1 would
+be the maximum of S1 . Similarly, xn3 is well-defined as the first term in (xn2 +1 , xn2 +2 , . . .) that is
+greater than xn2 . If there weren’t such a term, then xn2 > xm for all m ≥ n2 ; also, xn2 ≥ xm for
+all m < n2 by construction; so xn3 would be the maximum of S1 . Observe that, by construction,
+(xnk )k is nondecreasing.
+    Suppose that S1 has the maximum element but there exists Sn (for some n > 1) that has
+no maximum element. Then, we could reapply the same argument from above to construct a
+nondecreasing subsequence by taking letting xn1 := xn .
+  2 Since I only left this definition as an exercise, let me give it formally: b ∈ R is the maximum of set S ⊂ R if b ∈ S
+
+and b ≥ s for all s ∈ S. The minimum is defined analogously. Note that unbounded sets do not have maximum or
+minimum.
+
+
+
+                                                         -6-
+ECON 6170                                           Fall 2024                     1. Real Sequences
+
+
+    The only remaining case is if max Sn exists for all n ∈ N. Consider the following recursively
+defined sequence of indices:
+
+                                    n1 = min {m ∈ N : xm = max S1 }
+                              nk+1 = min {m ∈ N : xm = max Snk +1 } ∀k ∈ N.
+
+(Note that Sn is a set, hence max Sn is just a number, and not a set of maximisers.) The subsequence
+(xnk )k is nonincreasing because the sets Sn are nested appropriately.                             ■
+
+Exercise 30. TFU: Referring to the previous proof, if max S1 does not exist then neither do
+max Sn , for all n = 2, 3 . . ...
+
+Exercise 31 (PS2). In the second part of the proof of Proposition 7, can you replace min{m ∈ N :
+xm = max Snk +1 } with max{m ∈ N : xm = max Snk +1 }?
+
+Theorem 1 (Bolzano-Weierstrass). Every bounded sequence has a convergent subsequence.
+
+Proof. Let (xn )n be a bounded sequence. By Proposition 7, it has a monotonic subsequence (xnk )k .
+By Exercise 27, (xnk )k is bounded. By Proposition 5, monotone and bounded sequences converge.
+                                                                                                   ■
+
+
+2.4     lim sup and lim inf
+Definition 12. The limit superior (read “lim sup”) of a sequence (xn ) is
+
+                                      lim sup xn := lim sup {xn : n ≥ m} .
+                                       n→∞         m→∞
+
+
+The limit inferior (“lim inf”) is
+
+                                       lim inf xn := lim inf {xn : n ≥ m} .
+                                        n→∞        m→∞
+
+
+Proposition 8. Limit superior and limit inferior of a sequence always exist.
+
+Proof. We prove the case for lim sup. Define an := sup{xk : k ≥ n, k ∈ N}.
+    Suppose first that an < ∞ for all n ∈ N. Then, we must have an+1 ≤ an for all n ∈ N since
+an+1 is a supremum over a smaller set than an . Thus, (an )n is monotone decreasing. If (an )n is
+unbounded, (an ) diverges to −∞ (Proposition 6); if, instead, (an )n is bounded, then (an ) converges
+to a limit a = sup{an : n ∈ N} (Proposition 5).
+    Suppose instead that an = ∞ for some n ∈ N. If there are finitely many such n’s, an < ∞ for all
+n > N for some sufficiently large N . Applying the previous argument implies that lim supn→∞ xn
+is well-defined. If, instead, an = ∞ for all n ∈ N, then the limit of an is +∞.                    ■
+
+Proposition 9. Let (xn ) be a sequence. If lim inf xn = lim sup xn , then lim xn is well-defined and
+lim xn = lim inf xn = lim sup xn .
+
+Proof. Suppose lim inf xn = lim sup xn = x ∈ R. (The cases ±∞ are easier and left as an exercise.)
+Fix any ϵ > 0. By definition of lim sup, there exists N0 ∈ N such that |x − sup{xn : n ≥ N0 }| < ϵ
+(why?). In particular, sup{xn : n ≥ N0 } < x + ϵ, so xn < x + ϵ for all n > N0 . In the same fashion
+
+
+                                                      -7-
+ECON 6170                                               Fall 2024                           1. Real Sequences
+
+
+(how?), we can prove that there exists N1 such that xn > x − ϵ for all n > N1 . Putting these
+together, for all n > max{N0 , N1 }, x − ϵ < xn < x + ϵ; equivalently, |xn − x| < ϵ, which is what we
+wanted to prove.                                                                                           ■
+
+Exercise 32 (PS2). TFU: If (xn )n is a sequence, there exists an M ∈ N such that lim sup xn =
+sup{xn : n ≥ M }.
+
+Exercise 33 (PS2). Replace ⋆ with an appropriate symbol, then prove: For any sequences (xn ),
+(yn ),
+                                       lim sup (xn + yn ) ⋆ lim sup xn + lim sup yn
+                                        n→∞                  n→∞          n→∞
+
+provided the right hand side is not of the form ∞ + (−∞) (which is undefined).
+
+Exercise 34 (PS2). Consider the following non-theorem: Let xn → x ≥ 0 and (yn ) be any sequence.
+Then lim sup xn yn = x lim sup yn . Disprove this, then identify a tiny change to the assumptions
+that makes it true (but don’t prove it).
+
+
+2.5      Cauchy Sequences
+Definition 13. A sequence (xn )n is Cauchy if, for every ϵ > 0, there exists N ∈ N such that
+|xn − xm | < ϵ for all n, m > N .
+
+    In words, a sequence (xn )n is Cauchy if the distance between two elements in the tail of the
+sequence can be made arbitrarily small. The crucial distinction between Cauchy sequences and a
+convergent sequence is that the former does not refer to the limit point the sequence whereas the
+latter requires the limit point to exist.
+
+Proposition 10. If (xn )n converges to x ∈ R, then (xn )n is Cauchy.
+
+Proof. Fix ϵ > 0. Since xn → x, there exists N ∈ N such that |xn − x| < 2ϵ for all n > N . Since it
+is just a change of labels, it is also the case that for all m > N , |xm − x| < 2ϵ . Next, by the triangle
+inequality
+                                                                                      ϵ  ϵ
+                    |xn − xm | = |xn − x + x − xm | ≤ |xn − x| + |x − xm | <            + = ϵ.
+                                                                                      2 2
+Hence, (xn )n is Cauchy.                                                                                   ■
+
+Proposition 11. If (xn )n is Cauchy, then it is bounded.
+
+Proof. If (xn )n is Cauchy, then, in particular, for ϵ = 1, there exists N ∈ N such that |xn − xm | < 1
+for all n, m > N . In particular, this holds fixing m = N + 1. The “reverse” triangle inequality3 then
+gives |xn | < |xN +1 | + 1, for all n > N . Now take M = max{|xN +1 | + 1, |x0 |, . . . , |xN |} < +∞ and
+note that |xn | ≤ M for all n ∈ N. Hence (xn )n is bounded.                                                ■
+
+Proposition 12. If (xn )n is a Cauchy sequence and there is a subsequence (xnk )k that converges
+to x ∈ R, then (xn )n converges to x as well.
+
+Exercise 35. Prove Proposition 12.
+
+Theorem 2 (Cauchy criterion). A sequence (xn )n is convergent if and only if it is Cauchy.
+   3 That is, |x − y| ≥ ||x| − |y||.
+
+
+
+
+                                                          -8-
+ECON 6170                                          Fall 2024                              1. Real Sequences
+
+
+Proof. There are two implications to prove. The “only if” was Proposition 10. Let us prove the “if”
+part. Suppose that (xn ) is a Cauchy sequence. By Proposition 11, (xn )n is bounded. Now since
+(xn )n is a bounded sequence, by the Bolzano-Weierstrass Theorem there is a subsequence (xnk )k
+which converges. Then, by Proposition 12, we know that (xn )n must converge as well.                       ■
+
+Remark 8. A (metric) space is called complete if every Cauchy sequence is convergent. Thus, the
+previous result establishes that R is complete. . Completeness is the idea that the set has no “holes”.
+For example, Q is not complete because there are Cauchy sequences that are not convergent (e.g.,
+                                 √
+take a sequence that converges to 2 ∈
+                                    / Q). We like to work with complete spaces because it ensures
+that solutions exist; e.g., we want to be able to solve x2 = 2!
+
+
+2.6      Sequences in Rd
+So far, we have only considered sequences in R; i.e., (xn )n such that xn ∈ R for all n ∈ N. All the
+results we discussed above can be extended to the case when xn ∈ Rd (i.e., a product space of R)
+for all n ∈ N for any d ∈ N. Recall that we measured “distance” between two real numbers using
+the absolute value of the different (| · |).
+
+Definition 14. If x ∈ Rd , write x = (x1 , . . . , xk ). The Euclidean distance between x, y ∈ Rd is
+given by                                         v
+                                                 u d
+                                                 uX            2
+                                      ∥x − y∥d = t   (xi − yi ) .
+                                                          i=1
+
+We often simply write ∥ · ∥ (without the subscript d).
+
+    We now define xn → x if for all ϵ > 0, there exists N ∈ N such that ∥xn − x∥ < ϵ for all n > N .
+To extend the previous results, one can use the fact that a sequence (xn ) in Rd converging to a
+limit x is equivalent to convergence in each coordinate. Let xn,i denote the ith element of xn ∈ Rd .
+
+Proposition 13. A sequence (xn )n in Rd converges to a limit x if and only if xn,i → xi for all
+i ∈ {1, . . . , d}.
+
+Proof. First, suppose that xn → x. We wish to show that xn,i → xi for all i ∈ {1, . . . , d}; i.e.,
+for each i ∈ {1, . . . , d}, and for any ϵi > 0, there exists Nϵi ∈ N such that |xn,i − xi | < ϵi for all
+n > Nϵi . Let ϵi = ϵ > 0 for all i ∈ {1, . . . , d}. By definition of xn → x, we know that there exists
+Nϵ ∈ N such that, for all n > Nϵ ,
+                           v
+                           u d                        q
+                           uX                  2                     2
+                         ϵ>t   |x      n,i − xi | ≥       |xn,j − xj | = |xn,j − xj | ,
+                                i=1
+
+
+for any j ∈ {1, . . . , d}. For each i ∈ {1, . . . , d}, by setting Nϵi = Nϵ , we have shown that xn,i → xi .
+   Next, suppose that xn,i → xi for all i ∈ {1, . . . , d}. We wish to show that xn → x; i.e., for
+                                                                                        √
+any ϵ > 0, there exists Nϵ ∈ N such that ∥xn − x∥ < ϵ for all n > Nϵ . Define η := ϵ/ d. For
+each i ∈ {1, . . . , d}, by definition of xn,i → xi , there exists Niη ∈ N such that |xn,i − xi | < η for
+all n > Niη . Define Nϵ := max{N1η , . . . , Ndη } which is well defined since d is finite. Then, for any
+
+
+
+
+                                                      -9-
+ECON 6170                                   Fall 2024                             1. Real Sequences
+
+
+n > Ne , we have
+
+                                                            ϵ
+                                       |xn,i − xi | < η = √ ∀i ∈ {1, . . . , d}
+                                                             d
+                                v                     v
+                                u d                   u d 
+                                uX                2
+                                                      uX ϵ 2
+                   ⇔ ∥xn − x∥ = t     |xn,i − xi | < t         √   = ϵ.                          ■
+                                  i=1                   i=1
+                                                                 d
+
+
+
+
+                                              - 10 -
+
