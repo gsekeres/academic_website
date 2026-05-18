@@ -1,4 +1,5 @@
-const { randomUUID } = require("node:crypto");
+import { randomUUID } from "node:crypto";
+import { getStore as getBlobStore } from "@netlify/blobs";
 
 const STORE_NAME = "practice-community-solutions";
 const MAX_SOLUTIONS_PER_QUESTION = 100;
@@ -7,15 +8,14 @@ const MAX_TITLE_LENGTH = 300;
 const MAX_SOLUTION_LENGTH = 20000;
 const MIN_SOLUTION_LENGTH = 20;
 
-function json(statusCode, body) {
-  return {
-    statusCode,
+function json(status, body) {
+  return new Response(JSON.stringify(body), {
+    status,
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": "no-store"
-    },
-    body: JSON.stringify(body)
-  };
+    }
+  });
 }
 
 function cleanText(value, maxLength) {
@@ -64,9 +64,8 @@ function normalizeEntry(questionId, questionTitle, entry) {
   };
 }
 
-async function getStore() {
-  const blobs = await import("@netlify/blobs");
-  return blobs.getStore(STORE_NAME);
+async function getCommunityStore() {
+  return getBlobStore(STORE_NAME);
 }
 
 async function readEntry(store, questionId, questionTitle) {
@@ -92,7 +91,7 @@ async function writeEntry(store, questionId, entry, etag) {
 }
 
 async function mutateEntry(questionId, questionTitle, mutator) {
-  const store = await getStore();
+  const store = await getCommunityStore();
   for (let attempt = 0; attempt < 4; attempt += 1) {
     const current = await readEntry(store, questionId, questionTitle);
     const next = mutator(current.data);
@@ -104,13 +103,14 @@ async function mutateEntry(questionId, questionTitle, mutator) {
   throw new Error("Could not save because another update happened at the same time. Try again.");
 }
 
-async function listSolutions(event) {
-  const questionId = validateQuestionId(event.queryStringParameters && event.queryStringParameters.questionId);
+async function listSolutions(request) {
+  const url = new URL(request.url);
+  const questionId = validateQuestionId(url.searchParams.get("questionId"));
   if (!questionId) {
     return json(400, { error: "Missing or invalid questionId." });
   }
 
-  const store = await getStore();
+  const store = await getCommunityStore();
   const current = await readEntry(store, questionId, "");
   return json(200, {
     questionId,
@@ -193,17 +193,17 @@ async function voteForSolution(payload) {
   });
 }
 
-exports.handler = async function handler(event) {
-  if (event.httpMethod === "GET") {
-    return listSolutions(event);
+export default async function handler(request) {
+  if (request.method === "GET") {
+    return listSolutions(request);
   }
-  if (event.httpMethod !== "POST") {
+  if (request.method !== "POST") {
     return json(405, { error: "Use GET or POST." });
   }
 
   let payload;
   try {
-    payload = JSON.parse(event.body || "{}");
+    payload = await request.json();
   } catch {
     return json(400, { error: "Request body must be valid JSON." });
   }
@@ -220,4 +220,4 @@ exports.handler = async function handler(event) {
   }
 
   return json(400, { error: "Unknown action." });
-};
+}
