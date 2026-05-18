@@ -1,0 +1,32 @@
+[
+  {
+    "id": "consumer-choice-001",
+    "title": "Local Demand from First-Order Conditions",
+    "source_family": "Graduate Micro",
+    "difficulty": "Core",
+    "topics": ["consumer theory", "duality"],
+    "prompt": "<p>Let u be twice continuously differentiable, strictly increasing, and strictly quasi-concave on R^2_{++}. At prices p >> 0 and wealth w > 0, suppose x(p, w) is interior. Give primitive conditions under which the local derivative of Marshallian demand with respect to wealth is well-defined, and express the role of the bordered Hessian in the argument.</p>",
+    "hint": "<p>Use the first-order conditions and the budget constraint as a system in the two goods and the multiplier. The implicit-function theorem is the local tool.</p>",
+    "solution": "<p>Write u_i(x) = lambda p_i for i = 1,2 and p · x = w. If the Jacobian of these three equations with respect to (x_1, x_2, lambda) is nonsingular at the candidate optimum, the implicit-function theorem gives a locally unique differentiable demand function. The relevant Jacobian is the bordered Hessian of the constrained maximization problem, up to row and column signs. Strict quasi-concavity plus an interior regular optimum gives the second-order conditions needed for local nonsingularity.</p>"
+  },
+  {
+    "id": "normal-form-games-001",
+    "title": "Dominance and Rationalizability",
+    "source_family": "Game Theory",
+    "difficulty": "Core",
+    "topics": ["normal-form games", "rationalizability"],
+    "prompt": "<p>In a finite two-player normal-form game, a strategy s_i is strictly dominated by a mixed strategy. Explain why s_i cannot be rationalizable. Is the converse true without further assumptions?</p>",
+    "hint": "<p>Translate rationalizability into best responses to beliefs. A strictly dominated strategy is never a best response to any belief.</p>",
+    "solution": "<p>If a mixed strategy gives player i a strictly higher expected payoff than s_i against every strategy profile of the opponents, then by linearity it also gives a strictly higher payoff against every belief over opponents' strategies. Thus s_i is never a best response to any admissible belief and cannot survive rationalizability. In finite games, rationalizable strategies are exactly those that survive iterated deletion of strictly dominated strategies by mixed strategies. The converse needs the correct deletion concept and finiteness assumptions.</p>"
+  },
+  {
+    "id": "analysis-fixed-point-001",
+    "title": "Compactness and Fixed Points",
+    "source_family": "Analysis for Theory",
+    "difficulty": "Warmup",
+    "topics": ["fixed points", "continuity"],
+    "prompt": "<p>Let f: [0,1] -> [0,1] be continuous. Prove that f has a fixed point. Then state which part of the argument fails if the domain is (0,1).</p>",
+    "hint": "<p>Consider g(x) = f(x) - x and compare its values at the endpoints.</p>",
+    "solution": "<p>Define g(x) = f(x) - x. Since f maps [0,1] into [0,1], g(0) = f(0) >= 0 and g(1) = f(1) - 1 <= 0. By continuity and the intermediate value theorem, there is x* in [0,1] with g(x*) = 0, so f(x*) = x*. On (0,1), the endpoint comparison is unavailable and a continuous self-map need not have a fixed point; for example f(x) = x/2 maps (0,1) into (0,1) but has no fixed point in the domain.</p>"
+  }
+]

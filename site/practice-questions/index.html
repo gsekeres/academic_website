@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practice Questions | Gabe Sekeres</title>
+  <meta name="description" content="Random graduate microeconomics, game theory, and analysis practice questions.">
+  <link rel="icon" href="../assets/favicon/favicon.ico">
+  <link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="../">Gabe Sekeres</a>
+      <div class="nav-links">
+        <a href="../">Home</a>
+        <a href="../papers/">Papers</a>
+        <a href="../resources/">Resources</a>
+        <a href="./" aria-current="page">Practice Questions</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page">
+    <div class="narrow">
+      <h1>Practice Questions</h1>
+      <p class="lead">A rotating bank of graduate microeconomics, game theory, and analysis questions.</p>
+    </div>
+
+    <section class="practice-panel" aria-labelledby="question-title">
+      <div class="practice-toolbar">
+        <div id="question-meta" class="tag-list" aria-label="Question tags"></div>
+        <button id="new-question" type="button">New Question</button>
+      </div>
+
+      <h2 id="question-title">Loading question...</h2>
+      <div id="question-prompt" class="practice-prompt"></div>
+
+      <label class="answer-label" for="answer-draft">Answer draft</label>
+      <textarea id="answer-draft" class="answer-box" rows="7"></textarea>
+
+      <div class="practice-actions">
+        <button id="show-hint" type="button">Hint</button>
+        <button id="show-solution" type="button">Solution</button>
+      </div>
+
+      <div id="question-hint" class="response-panel" hidden></div>
+      <div id="question-solution" class="response-panel" hidden></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; 2026 Gabe Sekeres.</span>
+  </footer>
+  <script src="/assets/site.js" defer></script>
+  <script src="/assets/practice.js" defer></script>
+  <script src="/assets/margins.js" defer></script>
+</body>
+</html>
