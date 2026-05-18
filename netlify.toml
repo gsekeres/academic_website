@@ -1,16 +1,8 @@
 [build]
-  publish = "public"
-  command = "hugo"
+  publish = "site"
+  command = ""
 
-[build.environment]
-  HUGO_VERSION = "0.128.0"
-
-[context.production.environment]
-  HUGO_ENV = "production"
-  HUGO_ENABLEGITINFO = "true"
-
-[context.deploy-preview]
-  command = "hugo --buildFuture -b $DEPLOY_PRIME_URL"
-
-[context.branch-deploy]
-  command = "hugo -b $DEPLOY_PRIME_URL"
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
