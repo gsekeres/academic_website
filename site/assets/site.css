@@ -520,6 +520,28 @@ pre {
   gap: 34px;
 }
 
+/* CV page */
+.pdf-frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 8.5 / 11; /* one US-letter page; scroll within the frame for page 2 */
+  margin-top: 24px;
+  border: 1px solid var(--faint);
+  border-radius: 6px;
+  background: var(--paper);
+}
+
+.pdf-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+}
+
 .side-note {
   color: var(--muted);
   font-size: 0.94rem;

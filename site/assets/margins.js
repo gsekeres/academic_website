@@ -6,6 +6,13 @@
   var animationFrame = 0;
   var paused = false;
 
+  var FERN_COLOR = "34, 130, 56"; // green
+  var BG_COLOR = "251, 251, 250"; // matches --bg; used to gently fade older points
+  var FADE_ALPHA = 0.014; // per-frame fade so the fern keeps actively redrawing
+  var POINTS_PER_FRAME = 1800; // chaos-game points plotted each frame
+  var FERN_SIZE = 1.2; // >1 overshoots the aim point, enlarging the fern
+  var FERN_AIM_Y = 0.5; // tip aims at this fraction down the right edge
+
   function shouldRun() {
     return wideQuery.matches && !reduceQuery.matches;
   }
@@ -25,8 +32,14 @@
       width: 0,
       height: 0,
       scale: 1,
-      segments: [],
-      segmentIndex: 0,
+      fx: 0,
+      fy: 0,
+      settle: 0,
+      alongX: 1,
+      alongY: 0,
+      perpX: 0,
+      perpY: 1,
+      unit: 1,
       contentLeft: 0,
       contentRight: 0
     };
@@ -65,149 +78,81 @@
     state.width = width;
     state.height = height;
     state.scale = scale;
-    state.segments = buildBranchingFractal(rect.width, rect.height);
-    state.segmentIndex = 0;
+
+    // Lay the fern from the top-left corner toward the middle of the right edge.
+    var aimY = rect.height * FERN_AIM_Y;
+    var theta = Math.atan2(aimY, rect.width);
+    state.alongX = Math.cos(theta);
+    state.alongY = Math.sin(theta);
+    state.perpX = -Math.sin(theta);
+    state.perpY = Math.cos(theta);
+    var aimDist = Math.sqrt(rect.width * rect.width + aimY * aimY);
+    state.unit = (aimDist * FERN_SIZE) / 10; // fern is ~10 tall in its own coordinates
+
+    state.fx = 0;
+    state.fy = 0;
+    state.settle = 0;
     state.contentLeft = pageRect ? pageRect.left : rect.width / 2 - 380;
     state.contentRight = pageRect ? pageRect.right : rect.width / 2 + 380;
     state.context.clearRect(0, 0, width, height);
-    state.context.lineCap = "round";
-    state.context.lineJoin = "round";
     requestDraw();
   }
 
-  function random(seed) {
-    var value = Math.sin(seed * 12.9898) * 43758.5453;
-    return value - Math.floor(value);
-  }
-
-  function angleBetween(start, end) {
-    return Math.atan2(end.y - start.y, end.x - start.x);
-  }
-
-  function distanceBetween(start, end) {
-    var dx = end.x - start.x;
-    var dy = end.y - start.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-
-  function subdivideLine(start, end, depth, amplitude, seed) {
-    if (depth === 0) {
-      return [start, end];
-    }
-
-    var mid = {
-      x: (start.x + end.x) / 2,
-      y: (start.y + end.y) / 2
-    };
-    var angle = angleBetween(start, end) + Math.PI / 2;
-    var offset = (random(seed + depth * 13) - 0.5) * amplitude;
-    mid.x += Math.cos(angle) * offset;
-    mid.y += Math.sin(angle) * offset;
-
-    var left = subdivideLine(start, mid, depth - 1, amplitude * 0.55, seed + 7);
-    var right = subdivideLine(mid, end, depth - 1, amplitude * 0.55, seed + 17);
-    return left.slice(0, -1).concat(right);
-  }
-
-  function pushPolylineSegments(points, target, depth) {
-    for (var i = 1; i < points.length; i += 1) {
-      target.push({
-        x1: points[i - 1].x,
-        y1: points[i - 1].y,
-        x2: points[i].x,
-        y2: points[i].y,
-        depth: depth
-      });
-    }
-  }
-
-  function growBranch(origin, angle, length, depth, seed, target) {
-    if (depth <= 0 || length < 12) {
-      return;
-    }
-
-    var end = {
-      x: origin.x + Math.cos(angle) * length,
-      y: origin.y + Math.sin(angle) * length
-    };
-    var points = subdivideLine(origin, end, 4, length * 0.38, seed);
-    pushPolylineSegments(points, target, depth);
-
-    var forkBase = points[Math.max(1, Math.floor(points.length * 0.62))];
-    var secondFork = points[Math.max(1, Math.floor(points.length * 0.82))];
-    var spread = 0.46 + random(seed + 31) * 0.32;
-    growBranch(forkBase, angle - spread, length * 0.62, depth - 1, seed + 41, target);
-    growBranch(forkBase, angle + spread, length * 0.56, depth - 1, seed + 53, target);
-    growBranch(secondFork, angle + (random(seed + 67) - 0.5) * 1.1, length * 0.42, depth - 2, seed + 71, target);
-  }
-
-  function buildBranchingFractal(width, height) {
-    var waypoints = [
-      { x: -36, y: 84 },
-      { x: width * 0.22, y: 64 },
-      { x: width * 0.55, y: 114 },
-      { x: width + 42, y: 82 },
-      { x: width - 76, y: height * 0.34 },
-      { x: width + 38, y: height * 0.56 },
-      { x: width * 0.72, y: height * 0.78 },
-      { x: width * 0.34, y: height * 0.62 },
-      { x: -44, y: height * 0.82 },
-      { x: width * 0.18, y: height + 40 }
-    ];
-    var segments = [];
-    var branchSeed = 100;
-
-    for (var i = 1; i < waypoints.length; i += 1) {
-      var start = waypoints[i - 1];
-      var end = waypoints[i];
-      var length = distanceBetween(start, end);
-      var trunkPoints = subdivideLine(start, end, 6, Math.min(118, length * 0.26), i * 23);
-      for (var j = 1; j < trunkPoints.length; j += 1) {
-        var previous = trunkPoints[j - 1];
-        var current = trunkPoints[j];
-        segments.push({
-          x1: previous.x,
-          y1: previous.y,
-          x2: current.x,
-          y2: current.y,
-          depth: 5
-        });
-
-        if (j % 4 === 0) {
-          var localAngle = angleBetween(previous, current);
-          var side = (i + j) % 2 === 0 ? -1 : 1;
-          var branchAngle = localAngle + side * (Math.PI / 2.45 + random(branchSeed) * 0.54);
-          var branchLength = 42 + random(branchSeed + 3) * 126;
-          growBranch(current, branchAngle, branchLength, 4, branchSeed, segments);
-          branchSeed += 29;
-        }
-      }
-    }
-
-    return segments;
-  }
-
-  function segmentAlpha(midpointX, depth) {
-    var fade = 110;
-    var leftFade = Math.max(0, Math.min(1, (state.contentLeft - midpointX) / fade));
-    var rightFade = Math.max(0, Math.min(1, (midpointX - state.contentRight) / fade));
+  function pointAlpha(pointX) {
+    var fade = 120;
+    var leftFade = Math.max(0, Math.min(1, (state.contentLeft - pointX) / fade));
+    var rightFade = Math.max(0, Math.min(1, (pointX - state.contentRight) / fade));
     var marginStrength = Math.max(leftFade, rightFade);
-    var depthBoost = depth >= 5 ? 0.03 : 0;
-    return 0.035 + depthBoost + marginStrength * 0.17;
+    return 0.05 + marginStrength * 0.18;
   }
 
-  function strokeSegment(segment) {
+  // One animation frame of the Barnsley fern chaos game. The orbit is kept live
+  // across frames and points are plotted continuously, while a faint fade erases
+  // the oldest points so the fern is perpetually being drawn rather than static.
+  function stepFern() {
     var context = state.context;
     var scale = state.scale;
-    var midpointX = (segment.x1 + segment.x2) / 2;
-    var depth = segment.depth || 1;
+    var size = Math.max(1, scale);
 
-    context.beginPath();
-    context.moveTo(segment.x1 * scale, segment.y1 * scale);
-    context.lineTo(segment.x2 * scale, segment.y2 * scale);
-    context.lineWidth = Math.max(0.55, depth * 0.24) * scale;
-    context.strokeStyle = "rgba(139, 30, 63, " + segmentAlpha(midpointX, depth).toFixed(3) + ")";
-    context.stroke();
+    context.fillStyle = "rgba(" + BG_COLOR + ", " + FADE_ALPHA + ")";
+    context.fillRect(0, 0, state.width, state.height);
+
+    var x = state.fx;
+    var y = state.fy;
+    for (var i = 0; i < POINTS_PER_FRAME; i += 1) {
+      var r = Math.random();
+      var nx, ny;
+      if (r < 0.01) {
+        nx = 0;
+        ny = 0.16 * y;
+      } else if (r < 0.86) {
+        nx = 0.85 * x + 0.04 * y;
+        ny = -0.04 * x + 0.85 * y + 1.6;
+      } else if (r < 0.93) {
+        nx = 0.20 * x - 0.26 * y;
+        ny = 0.23 * x + 0.22 * y + 1.6;
+      } else {
+        nx = -0.15 * x + 0.28 * y;
+        ny = 0.26 * x + 0.24 * y + 0.44;
+      }
+      x = nx;
+      y = ny;
+
+      if (state.settle < 20) {
+        state.settle += 1; // let the orbit settle onto the attractor
+        continue;
+      }
+
+      var along = y * state.unit;
+      var perp = x * state.unit;
+      var cx = state.alongX * along + state.perpX * perp;
+      var cy = state.alongY * along + state.perpY * perp;
+      context.fillStyle = "rgba(" + FERN_COLOR + ", " + pointAlpha(cx).toFixed(3) + ")";
+      context.fillRect(cx * scale, cy * scale, size, size);
+    }
+
+    state.fx = x;
+    state.fy = y;
   }
 
   function draw() {
@@ -216,16 +161,7 @@
       return;
     }
 
-    if (state.segmentIndex >= state.segments.length) {
-      return;
-    }
-
-    var segmentsThisFrame = 16;
-    for (var i = 0; i < segmentsThisFrame && state.segmentIndex < state.segments.length; i += 1) {
-      strokeSegment(state.segments[state.segmentIndex]);
-      state.segmentIndex += 1;
-    }
-
+    stepFern();
     animationFrame = window.requestAnimationFrame(draw);
   }
 
