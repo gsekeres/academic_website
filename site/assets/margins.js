@@ -1,204 +1,646 @@
 (function () {
-  var wideQuery = window.matchMedia("(min-width: 1080px)");
+  // A latent-space network sampled from Gaussian mixtures on either side of
+  // the content, with local geometric links and a few cross-cloud bridges.
+  var REVEAL_SECONDS = 2.25;
+  var SESSION_SEED_KEY = "gabe-margin-network-seed";
+  var SESSION_REVEALED_KEY = "gabe-gaussian-network-revealed-v1";
+
   var reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var state = null;
-  var resizeTimer = 0;
+  var pane = null;
+  var canvas = null;
+  var context = null;
+  var model = null;
   var animationFrame = 0;
-  var paused = false;
+  var animationStart = 0;
+  var lastDraw = 0;
+  var resizeTimer = 0;
+  var elapsedBeforePause = 0;
+  var forceStatic = false;
 
-  var FERN_COLOR = "34, 130, 56"; // green
-  var BG_COLOR = "251, 251, 250"; // matches --bg; used to gently fade older points
-  var FADE_ALPHA = 0.014; // per-frame fade so the fern keeps actively redrawing
-  var POINTS_PER_FRAME = 1800; // chaos-game points plotted each frame
-  var FERN_SIZE = 1.2; // >1 overshoots the aim point, enlarging the fern
-  var FERN_AIM_Y = 0.5; // tip aims at this fraction down the right edge
-
-  function shouldRun() {
-    return wideQuery.matches && !reduceQuery.matches;
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
   }
 
-  function createState() {
-    var pane = document.createElement("div");
-    var canvas = document.createElement("canvas");
-    pane.className = "margin-fractal";
+  function readSession(key) {
+    try {
+      return window.sessionStorage.getItem(key);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeSession(key, value) {
+    try {
+      window.sessionStorage.setItem(key, String(value));
+    } catch (error) {
+      // The network still works when session storage is unavailable.
+    }
+  }
+
+  function makeSeed() {
+    if (window.crypto && window.crypto.getRandomValues) {
+      var values = new Uint32Array(1);
+      window.crypto.getRandomValues(values);
+      return values[0] >>> 0;
+    }
+    return (Date.now() ^ Math.floor(Math.random() * 0xffffffff)) >>> 0;
+  }
+
+  function getSeed() {
+    var stored = Number(readSession(SESSION_SEED_KEY));
+    if (Number.isFinite(stored) && stored > 0) {
+      return stored >>> 0;
+    }
+    var seed = makeSeed();
+    writeSession(SESSION_SEED_KEY, seed);
+    return seed;
+  }
+
+  function mulberry32(seed) {
+    return function () {
+      var value = (seed += 0x6d2b79f5);
+      value = Math.imul(value ^ (value >>> 15), value | 1);
+      value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+      return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function makeNormalRandom(random) {
+    var spare = null;
+    return function () {
+      if (spare !== null) {
+        var value = spare;
+        spare = null;
+        return value;
+      }
+
+      var u = 0;
+      var v = 0;
+      while (u === 0) {
+        u = random();
+      }
+      while (v === 0) {
+        v = random();
+      }
+      var magnitude = Math.sqrt(-2 * Math.log(u));
+      var angle = Math.PI * 2 * v;
+      spare = magnitude * Math.sin(angle);
+      return magnitude * Math.cos(angle);
+    };
+  }
+
+  function connectionSavesData() {
+    var connection =
+      navigator.connection ||
+      navigator.mozConnection ||
+      navigator.webkitConnection;
+    return Boolean(connection && connection.saveData);
+  }
+
+  function createCanvas() {
+    pane = document.createElement("div");
+    canvas = document.createElement("canvas");
+    pane.className = "margin-network";
     pane.setAttribute("aria-hidden", "true");
     canvas.setAttribute("aria-hidden", "true");
     pane.appendChild(canvas);
     document.body.appendChild(pane);
-    return {
-      pane: pane,
-      canvas: canvas,
-      context: canvas.getContext("2d", { alpha: true }),
-      width: 0,
-      height: 0,
-      scale: 1,
-      fx: 0,
-      fy: 0,
-      settle: 0,
-      alongX: 1,
-      alongY: 0,
-      perpX: 0,
-      perpY: 1,
-      unit: 1,
-      contentLeft: 0,
-      contentRight: 0
-    };
+    context = canvas.getContext("2d", { alpha: true });
+    if (!context) {
+      pane.remove();
+      pane = null;
+      canvas = null;
+    }
   }
 
-  function removeState() {
-    if (state) {
-      state.pane.remove();
-      state = null;
-    }
+  function removeCanvas() {
     if (animationFrame) {
       window.cancelAnimationFrame(animationFrame);
       animationFrame = 0;
     }
+    if (pane) {
+      pane.remove();
+    }
+    pane = null;
+    canvas = null;
+    context = null;
+    model = null;
   }
 
-  function resetAll() {
-    if (!shouldRun()) {
-      removeState();
-      return;
+  function contentBounds(viewportWidth) {
+    var elements = [
+      document.querySelector(".page"),
+      document.querySelector(".nav"),
+      document.querySelector(".footer")
+    ].filter(Boolean);
+    var rects = elements.map(function (element) {
+      return element.getBoundingClientRect();
+    });
+
+    if (!rects.length) {
+      return { left: viewportWidth * 0.2, right: viewportWidth * 0.8 };
     }
 
-    if (!state) {
-      state = createState();
+    return {
+      left: clamp(
+        Math.min.apply(
+          Math,
+          rects.map(function (rect) {
+            return rect.left;
+          })
+        ),
+        0,
+        viewportWidth
+      ),
+      right: clamp(
+        Math.max.apply(
+          Math,
+          rects.map(function (rect) {
+            return rect.right;
+          })
+        ),
+        0,
+        viewportWidth
+      )
+    };
+  }
+
+  function pickComponent(random) {
+    var value = random();
+    if (value < 0.28) {
+      return 0;
     }
-
-    var rect = state.pane.getBoundingClientRect();
-    var scale = Math.min(1.5, window.devicePixelRatio || 1);
-    var width = Math.max(1, Math.floor(rect.width * scale));
-    var height = Math.max(1, Math.floor(rect.height * scale));
-    var page = document.querySelector(".page");
-    var pageRect = page ? page.getBoundingClientRect() : null;
-
-    state.canvas.width = width;
-    state.canvas.height = height;
-    state.width = width;
-    state.height = height;
-    state.scale = scale;
-
-    // Lay the fern from the top-left corner toward the middle of the right edge.
-    var aimY = rect.height * FERN_AIM_Y;
-    var theta = Math.atan2(aimY, rect.width);
-    state.alongX = Math.cos(theta);
-    state.alongY = Math.sin(theta);
-    state.perpX = -Math.sin(theta);
-    state.perpY = Math.cos(theta);
-    var aimDist = Math.sqrt(rect.width * rect.width + aimY * aimY);
-    state.unit = (aimDist * FERN_SIZE) / 10; // fern is ~10 tall in its own coordinates
-
-    state.fx = 0;
-    state.fy = 0;
-    state.settle = 0;
-    state.contentLeft = pageRect ? pageRect.left : rect.width / 2 - 380;
-    state.contentRight = pageRect ? pageRect.right : rect.width / 2 + 380;
-    state.context.clearRect(0, 0, width, height);
-    requestDraw();
+    if (value < 0.72) {
+      return 1;
+    }
+    return 2;
   }
 
-  function pointAlpha(pointX) {
-    var fade = 120;
-    var leftFade = Math.max(0, Math.min(1, (state.contentLeft - pointX) / fade));
-    var rightFade = Math.max(0, Math.min(1, (pointX - state.contentRight) / fade));
-    var marginStrength = Math.max(leftFade, rightFade);
-    return 0.05 + marginStrength * 0.18;
-  }
+  function makeNode(
+    side,
+    index,
+    component,
+    centerX,
+    sigmaX,
+    maxX,
+    minX,
+    viewportHeight,
+    random,
+    normal
+  ) {
+    var yCenters = [0.16, 0.5, 0.84];
+    var ySigmas = [0.13, 0.19, 0.13];
+    var x = centerX;
+    var y = viewportHeight * yCenters[component];
 
-  // One animation frame of the Barnsley fern chaos game. The orbit is kept live
-  // across frames and points are plotted continuously, while a faint fade erases
-  // the oldest points so the fern is perpetually being drawn rather than static.
-  function stepFern() {
-    var context = state.context;
-    var scale = state.scale;
-    var size = Math.max(1, scale);
-
-    context.fillStyle = "rgba(" + BG_COLOR + ", " + FADE_ALPHA + ")";
-    context.fillRect(0, 0, state.width, state.height);
-
-    var x = state.fx;
-    var y = state.fy;
-    for (var i = 0; i < POINTS_PER_FRAME; i += 1) {
-      var r = Math.random();
-      var nx, ny;
-      if (r < 0.01) {
-        nx = 0;
-        ny = 0.16 * y;
-      } else if (r < 0.86) {
-        nx = 0.85 * x + 0.04 * y;
-        ny = -0.04 * x + 0.85 * y + 1.6;
-      } else if (r < 0.93) {
-        nx = 0.20 * x - 0.26 * y;
-        ny = 0.23 * x + 0.22 * y + 1.6;
-      } else {
-        nx = -0.15 * x + 0.28 * y;
-        ny = 0.26 * x + 0.24 * y + 0.44;
+    for (var attempt = 0; attempt < 12; attempt += 1) {
+      var candidateX = centerX + normal() * sigmaX;
+      var candidateY =
+        viewportHeight * yCenters[component] +
+        normal() * viewportHeight * ySigmas[component];
+      if (
+        candidateX >= minX &&
+        candidateX <= maxX &&
+        candidateY >= -16 &&
+        candidateY <= viewportHeight + 16
+      ) {
+        x = candidateX;
+        y = candidateY;
+        break;
       }
-      x = nx;
-      y = ny;
+    }
 
-      if (state.settle < 20) {
-        state.settle += 1; // let the orbit settle onto the attractor
+    return {
+      index: index,
+      side: side,
+      component: component,
+      x: clamp(x, minX, Math.max(minX, maxX)),
+      y: clamp(y, -8, viewportHeight + 8),
+      radius: 0.85 + random() * 0.58,
+      birth: 0.08 + random() * 0.84,
+      bridge: false
+    };
+  }
+
+  function edgeKey(a, b) {
+    return a < b ? a + ":" + b : b + ":" + a;
+  }
+
+  function distanceSquared(a, b) {
+    var dx = b.x - a.x;
+    var dy = b.y - a.y;
+    return dx * dx + dy * dy;
+  }
+
+  function makeLocalEdges(nodes, random, viewportWidth, viewportHeight) {
+    var edges = [];
+    var seen = new Set();
+    var localRadius = clamp(
+      Math.sqrt(viewportWidth * viewportHeight) / 5,
+      96,
+      180
+    );
+    var radiusSquared = localRadius * localRadius;
+
+    nodes.forEach(function (source) {
+      var candidates = nodes
+        .filter(function (target) {
+          return target.side === source.side && target.index !== source.index;
+        })
+        .map(function (target) {
+          return { target: target, distance: distanceSquared(source, target) };
+        })
+        .sort(function (a, b) {
+          return a.distance - b.distance;
+        });
+
+      var neighborCount = random() < 0.22 ? 3 : 2;
+      candidates.slice(0, neighborCount).forEach(function (candidate, rank) {
+        if (candidate.distance > radiusSquared && rank > 0) {
+          return;
+        }
+        var key = edgeKey(source.index, candidate.target.index);
+        if (seen.has(key)) {
+          return;
+        }
+        seen.add(key);
+        edges.push({
+          a: source.index,
+          b: candidate.target.index,
+          start: Math.max(source.birth, candidate.target.birth),
+          duration: 0.24
+        });
+      });
+    });
+
+    return edges;
+  }
+
+  function bridgeCurve(a, b, random, viewportWidth, viewportHeight) {
+    var dx = b.x - a.x;
+    var dy = b.y - a.y;
+    var distance = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+    var normalX = -dy / distance;
+    var normalY = dx / distance;
+    var direction = random() < 0.5 ? -1 : 1;
+    var bow = Math.min(72, Math.max(18, distance * 0.09));
+
+    return {
+      cx: clamp(
+        (a.x + b.x) / 2 + normalX * bow * direction,
+        8,
+        viewportWidth - 8
+      ),
+      cy: clamp(
+        (a.y + b.y) / 2 + normalY * bow * direction,
+        -24,
+        viewportHeight + 24
+      )
+    };
+  }
+
+  function makeBridges(nodes, random, viewportWidth, viewportHeight) {
+    var left = nodes.filter(function (node) {
+      return node.side === "left";
+    });
+    var right = nodes.filter(function (node) {
+      return node.side === "right";
+    });
+    var bridgeCount = viewportWidth < 760 ? 2 : 3;
+    var bridges = [];
+    var seen = new Set();
+
+    for (var index = 0; index < bridgeCount; index += 1) {
+      var source = left[Math.floor(random() * left.length)];
+      var candidates = right
+        .map(function (target) {
+          return {
+            target: target,
+            score:
+              Math.abs(source.y - target.y) * (0.75 + random() * 0.5) +
+              random() * viewportHeight * 0.08
+          };
+        })
+        .sort(function (a, b) {
+          return a.score - b.score;
+        });
+      var target = candidates[Math.floor(random() * Math.min(4, candidates.length))].target;
+      var key = edgeKey(source.index, target.index);
+      if (seen.has(key)) {
+        index -= 1;
         continue;
       }
-
-      var along = y * state.unit;
-      var perp = x * state.unit;
-      var cx = state.alongX * along + state.perpX * perp;
-      var cy = state.alongY * along + state.perpY * perp;
-      context.fillStyle = "rgba(" + FERN_COLOR + ", " + pointAlpha(cx).toFixed(3) + ")";
-      context.fillRect(cx * scale, cy * scale, size, size);
+      seen.add(key);
+      source.bridge = true;
+      target.bridge = true;
+      var control = bridgeCurve(
+        source,
+        target,
+        random,
+        viewportWidth,
+        viewportHeight
+      );
+      bridges.push({
+        a: source.index,
+        b: target.index,
+        cx: control.cx,
+        cy: control.cy,
+        start: 1.1 + index * 0.12,
+        duration: 0.5
+      });
     }
 
-    state.fx = x;
-    state.fy = y;
+    return bridges;
   }
 
-  function draw() {
+  function buildNetwork(viewportWidth, viewportHeight, seed) {
+    var random = mulberry32(seed >>> 0);
+    var normal = makeNormalRandom(random);
+    var bounds = contentBounds(viewportWidth);
+    var leftMargin = Math.max(0, bounds.left);
+    var rightMargin = Math.max(0, viewportWidth - bounds.right);
+    var leftCenter = clamp(
+      leftMargin * 0.52,
+      viewportWidth * 0.1,
+      viewportWidth * 0.24
+    );
+    var rightCenter = clamp(
+      bounds.right + rightMargin * 0.48,
+      viewportWidth * 0.76,
+      viewportWidth * 0.9
+    );
+    var leftSigma = clamp(
+      Math.max(viewportWidth * 0.05, leftMargin * 0.38),
+      34,
+      140
+    );
+    var rightSigma = clamp(
+      Math.max(viewportWidth * 0.05, rightMargin * 0.38),
+      34,
+      140
+    );
+    var contentTail = Math.max(42, viewportWidth * 0.08);
+    var leftMax = Math.min(viewportWidth * 0.48, bounds.left + contentTail);
+    var rightMin = Math.max(viewportWidth * 0.52, bounds.right - contentTail);
+    var nodeCount = clamp(
+      Math.round((viewportWidth * viewportHeight) / 4500),
+      176,
+      360
+    );
+    var leftCount = Math.ceil(nodeCount / 2);
+    var nodes = [];
+
+    for (var leftIndex = 0; leftIndex < leftCount; leftIndex += 1) {
+      nodes.push(
+        makeNode(
+          "left",
+          nodes.length,
+          pickComponent(random),
+          leftCenter,
+          leftSigma,
+          Math.max(6, leftMax),
+          4,
+          viewportHeight,
+          random,
+          normal
+        )
+      );
+    }
+
+    for (var rightIndex = leftCount; rightIndex < nodeCount; rightIndex += 1) {
+      nodes.push(
+        makeNode(
+          "right",
+          nodes.length,
+          pickComponent(random),
+          rightCenter,
+          rightSigma,
+          viewportWidth - 4,
+          Math.min(viewportWidth - 6, rightMin),
+          viewportHeight,
+          random,
+          normal
+        )
+      );
+    }
+
+    return {
+      nodes: nodes,
+      localEdges: makeLocalEdges(nodes, random, viewportWidth, viewportHeight),
+      bridges: makeBridges(nodes, random, viewportWidth, viewportHeight)
+    };
+  }
+
+  function quadraticPoint(a, edge, b, time) {
+    var inverse = 1 - time;
+    return {
+      x:
+        inverse * inverse * a.x +
+        2 * inverse * time * edge.cx +
+        time * time * b.x,
+      y:
+        inverse * inverse * a.y +
+        2 * inverse * time * edge.cy +
+        time * time * b.y
+    };
+  }
+
+  function edgeProgress(elapsed, edge) {
+    return clamp((elapsed - edge.start) / edge.duration, 0, 1);
+  }
+
+  function drawNetwork(elapsed) {
+    var nodes = model.network.nodes;
+    context.lineCap = "round";
+    context.lineJoin = "round";
+
+    context.beginPath();
+    model.network.localEdges.forEach(function (edge) {
+      var progress = edgeProgress(elapsed, edge);
+      if (progress <= 0) {
+        return;
+      }
+      var a = nodes[edge.a];
+      var b = nodes[edge.b];
+      context.moveTo(a.x, a.y);
+      context.lineTo(
+        a.x + (b.x - a.x) * progress,
+        a.y + (b.y - a.y) * progress
+      );
+    });
+    context.strokeStyle = "rgba(29, 29, 31, 0.052)";
+    context.lineWidth = 0.72;
+    context.stroke();
+
+    context.beginPath();
+    model.network.bridges.forEach(function (edge) {
+      var progress = edgeProgress(elapsed, edge);
+      if (progress <= 0) {
+        return;
+      }
+      var a = nodes[edge.a];
+      var b = nodes[edge.b];
+      var steps = Math.max(1, Math.ceil(progress * 14));
+      context.moveTo(a.x, a.y);
+      for (var step = 1; step <= steps; step += 1) {
+        var time = Math.min(progress, step / 14);
+        var point = quadraticPoint(a, edge, b, time);
+        context.lineTo(point.x, point.y);
+      }
+    });
+    context.strokeStyle = "rgba(139, 30, 63, 0.09)";
+    context.lineWidth = 0.9;
+    context.stroke();
+
+    nodes.forEach(function (node) {
+      var progress = clamp((elapsed - node.birth) / 0.18, 0, 1);
+      if (progress <= 0) {
+        return;
+      }
+      context.globalAlpha = progress;
+      context.beginPath();
+      context.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+      context.fillStyle = "rgba(29, 29, 31, 0.19)";
+      context.fill();
+
+      if (node.bridge && elapsed > 1.08) {
+        context.beginPath();
+        context.arc(node.x, node.y, Math.max(0.58, node.radius * 0.54), 0, Math.PI * 2);
+        context.fillStyle = "rgba(139, 30, 63, 0.34)";
+        context.fill();
+      }
+    });
+    context.globalAlpha = 1;
+  }
+
+  function draw(elapsed) {
+    if (!context || !model) {
+      return;
+    }
+    context.clearRect(0, 0, model.width, model.height);
+    drawNetwork(elapsed);
+  }
+
+  function finishReveal() {
     animationFrame = 0;
-    if (!shouldRun() || paused || !state) {
+    elapsedBeforePause = REVEAL_SECONDS;
+    draw(REVEAL_SECONDS);
+    writeSession(SESSION_REVEALED_KEY, "1");
+  }
+
+  function animate(timestamp) {
+    animationFrame = 0;
+    if (document.hidden || !model) {
+      return;
+    }
+    if (!animationStart) {
+      animationStart = timestamp - elapsedBeforePause * 1000;
+    }
+    var elapsed = (timestamp - animationStart) / 1000;
+    elapsedBeforePause = elapsed;
+
+    if (timestamp - lastDraw >= 32) {
+      draw(elapsed);
+      lastDraw = timestamp;
+    }
+    if (elapsed >= REVEAL_SECONDS) {
+      finishReveal();
+      return;
+    }
+    animationFrame = window.requestAnimationFrame(animate);
+  }
+
+  function startReveal() {
+    var alreadyRevealed = readSession(SESSION_REVEALED_KEY) === "1";
+    var staticMode =
+      forceStatic || reduceQuery.matches || connectionSavesData() || alreadyRevealed;
+    animationStart = 0;
+    lastDraw = 0;
+    elapsedBeforePause = 0;
+
+    if (staticMode) {
+      draw(REVEAL_SECONDS);
+      return;
+    }
+    animationFrame = window.requestAnimationFrame(animate);
+  }
+
+  function rebuild() {
+    if (animationFrame) {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
+    }
+
+    if (!document.querySelector(".page")) {
+      removeCanvas();
+      return;
+    }
+    if (!pane) {
+      createCanvas();
+    }
+    if (!context) {
       return;
     }
 
-    stepFern();
-    animationFrame = window.requestAnimationFrame(draw);
-  }
+    var width = Math.max(1, window.innerWidth);
+    var height = Math.max(1, window.innerHeight);
+    var scale = Math.min(1.5, window.devicePixelRatio || 1);
+    var baseSeed = getSeed();
 
-  function requestDraw() {
-    if (!animationFrame && shouldRun() && !paused) {
-      animationFrame = window.requestAnimationFrame(draw);
-    }
+    canvas.width = Math.floor(width * scale);
+    canvas.height = Math.floor(height * scale);
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    context.setTransform(scale, 0, 0, scale, 0, 0);
+    model = {
+      width: width,
+      height: height,
+      network: buildNetwork(width, height, baseSeed ^ 0x9e3779b9)
+    };
+    startReveal();
   }
 
   function handleResize() {
     window.clearTimeout(resizeTimer);
-    resizeTimer = window.setTimeout(resetAll, 180);
+    resizeTimer = window.setTimeout(function () {
+      forceStatic = true;
+      rebuild();
+    }, 180);
   }
 
   function handleVisibility() {
-    paused = document.hidden;
-    if (!paused) {
-      requestDraw();
+    if (document.hidden) {
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+      }
+      return;
+    }
+    if (model && elapsedBeforePause < REVEAL_SECONDS && !animationFrame) {
+      animationStart = performance.now() - elapsedBeforePause * 1000;
+      animationFrame = window.requestAnimationFrame(animate);
     }
   }
 
   function listenToQuery(query) {
+    var onChange = function () {
+      forceStatic = true;
+      rebuild();
+    };
     if (query.addEventListener) {
-      query.addEventListener("change", resetAll);
+      query.addEventListener("change", onChange);
     } else {
-      query.addListener(resetAll);
+      query.addListener(onChange);
     }
   }
 
-  listenToQuery(wideQuery);
   listenToQuery(reduceQuery);
   window.addEventListener("resize", handleResize, { passive: true });
   document.addEventListener("visibilitychange", handleVisibility);
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", resetAll, { once: true });
+    document.addEventListener("DOMContentLoaded", rebuild, { once: true });
   } else {
-    resetAll();
+    rebuild();
   }
 })();
